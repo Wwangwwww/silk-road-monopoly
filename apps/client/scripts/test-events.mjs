@@ -101,8 +101,14 @@ console.log('场景1: 人类玩家落在事件格');
   const fBefore = human.fleetLevel;
   store.movePlayer(1);
 
+  assert(store.phase === 'event', `移动后进入事件阶段 (phase=${store.phase})`);
+  assert(store.currentEvent === null, '棋子移动到位前事件尚未触发（等动画结束）');
+
+  // 模拟棋子动画到达目标格
+  store.notifyMoveFinished();
+
   assert(['event', 'turn_end', 'port_action'].includes(store.phase), `事件后 phase 合法 (phase=${store.phase})`);
-  assert(store.currentEvent !== null, '已抽到事件卡片');
+  assert(store.currentEvent !== null, '棋子到位后已抽到事件卡片');
   if (store.currentEvent) {
     assert(VALID_EFFECTS.has(store.currentEvent.effect), `卡片效果类型合法 (${store.currentEvent.effect})`);
   }
@@ -118,7 +124,9 @@ console.log('场景2: endTurn 清空事件卡片');
   const cell = findEventCell(store);
   placeBefore(store, human, cell.index);
   store.movePlayer(1);
-  assert(store.currentEvent !== null, '事件卡片已展示');
+  assert(store.currentEvent === null, '棋子未到位时事件未触发');
+  store.notifyMoveFinished();
+  assert(store.currentEvent !== null, '棋子到位后事件卡片已展示');
 
   store.endTurn();
   assert(store.currentEvent === null, 'endTurn 后事件卡片已清空');
@@ -141,6 +149,9 @@ console.log('场景3: AI 玩家落在事件格');
   const fBefore = ai.fleetLevel;
   store.movePlayer(1);
 
+  assert(store.currentEvent === null, 'AI 棋子到位前事件未触发');
+  store.notifyMoveFinished();
+
   assert(store.currentEvent !== null, 'AI 也抽到了事件卡片');
   const effectHappened = ai.silver !== sBefore || ai.position !== pBefore || ai.fleetLevel !== fBefore;
   assert(effectHappened, 'AI 的事件效果同样生效');
@@ -156,6 +167,7 @@ console.log('场景4: 卡池类型覆盖（抽样统计）');
     const cell = findEventCell(store);
     placeBefore(store, human, cell.index);
     store.movePlayer(1);
+    store.notifyMoveFinished();
     if (store.currentEvent) {
       seen.add(store.currentEvent.effect);
     }
@@ -174,6 +186,7 @@ console.log('场景5: 压力测试（50 局）');
     const cell = findEventCell(store);
     placeBefore(store, human, cell.index);
     store.movePlayer(1);
+    store.notifyMoveFinished();
     if (!['event', 'turn_end', 'port_action'].includes(store.phase)) {
       ok = false;
       console.log(`  ❌ 第 ${i + 1} 局 phase 异常: ${store.phase}`);

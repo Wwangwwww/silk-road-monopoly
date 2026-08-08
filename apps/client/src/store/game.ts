@@ -221,6 +221,8 @@ export const useGameStore = defineStore('game', () => {
 
   // ---------- 事件链保护：事件效果引发的二次移动若再落事件格，不再连环触发 ----------
   let eventChainDepth = 0;
+  // 待触发事件标记：棋子动画到达目标格后（notifyMoveFinished）才触发，避免移动途中弹窗
+  let pendingEvent = false;
 
   // ---------- 计算属性 ----------
   const currentPlayer = computed(() => players.value[currentPlayerIndex.value] ?? null);
@@ -279,6 +281,7 @@ export const useGameStore = defineStore('game', () => {
     diceResult.value = null;
     currentEvent.value = null;
     eventChainDepth = 0;
+    pendingEvent = false;
     properties.value = new Map();
     logs.value = [];
     mapItems.value = createDefaultPorts();
@@ -363,17 +366,9 @@ export const useGameStore = defineStore('game', () => {
         if (eventChainDepth > 0) {
           phase.value = GamePhaseMark.TurnEnd;
         } else {
-          drawEventCard();
-          const card = currentEvent.value;
-          if (!card) {
-            phase.value = GamePhaseMark.TurnEnd;
-            break;
-          }
-          // 移动类事件会由 movePlayer/teleportTo 更新 phase；其余事件停留在 Event 阶段展示卡片
-          const moved = applyEvent(card);
-          if (!moved) {
-            phase.value = GamePhaseMark.Event;
-          }
+          // 标记待触发事件：等棋子动画到达目标格后再抽卡并应用效果
+          pendingEvent = true;
+          phase.value = GamePhaseMark.Event;
         }
         break;
       }
@@ -390,6 +385,21 @@ export const useGameStore = defineStore('game', () => {
         break;
       default:
         phase.value = GamePhaseMark.TurnEnd;
+    }
+  }
+
+  // ---------- 触发待定事件（棋子动画到达目标格后由 notifyMoveFinished 调用） ----------
+  function triggerPendingEvent() {
+    drawEventCard();
+    const card = currentEvent.value;
+    if (!card) {
+      phase.value = GamePhaseMark.TurnEnd;
+      return;
+    }
+    // 移动类事件会由 movePlayer/teleportTo 更新 phase；其余事件停留在 Event 阶段展示卡片
+    const moved = applyEvent(card);
+    if (!moved) {
+      phase.value = GamePhaseMark.Event;
     }
   }
 
@@ -628,6 +638,7 @@ export const useGameStore = defineStore('game', () => {
     // 重置事件展示与事件链保护
     currentEvent.value = null;
     eventChainDepth = 0;
+    pendingEvent = false;
 
     // 检查破产
     if (player.silver <= 0 && !player.isBankrupt) {
@@ -791,6 +802,11 @@ export const useGameStore = defineStore('game', () => {
   }
   function notifyMoveFinished() {
     moveOngoing = false;
+    // 棋子动画已到达目标格，此时才触发待定的航海事件（弹窗在棋子到位后弹出）
+    if (pendingEvent && !isGameOver.value) {
+      pendingEvent = false;
+      triggerPendingEvent();
+    }
     const waiters = moveWaiters.splice(0);
     waiters.forEach((w) => w());
   }
@@ -826,6 +842,7 @@ export const useGameStore = defineStore('game', () => {
     diceResult.value = null;
     currentEvent.value = null;
     eventChainDepth = 0;
+    pendingEvent = false;
     isGameStarted.value = false;
     isGameOver.value = false;
     winner.value = null;
