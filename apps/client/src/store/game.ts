@@ -718,17 +718,19 @@ export const useGameStore = defineStore('game', () => {
         handleAIPortAction(player, mapItems.value[player.position] ?? landedItem);
         break;
       }
-      case GamePhaseMark.Event: {
-        // 事件已在 settleLanding 中完成抽卡与效果应用，此处停顿让玩家看清 AI 触发的事件卡片
-        await new Promise((r) => setTimeout(r, 1200));
-        break;
-      }
       // tax / go_to_jail / jail / free_port / start_port 已在 movePlayer 中处理
-      // 直接进入 endTurn
+      // Event 阶段的事件已在棋子到位（notifyMoveFinished）后触发，
+      // 卡片展示等待统一放在 waitForMove 之后处理
     }
 
     // 等待当前 AI 的帆船动画完全走完，再切换到下一个（保证按顺序行动）
     await waitForMove();
+
+    // AI 触发事件后，棋子已到位、卡片已在屏幕中央弹出，给玩家足够时间查看再结束回合
+    if (currentEvent.value) {
+      await new Promise((r) => setTimeout(r, 1500));
+    }
+
     endTurn();
   }
 
