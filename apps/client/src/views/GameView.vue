@@ -113,7 +113,7 @@
           <!-- 事件阶段（详情由屏幕中央弹窗展示） -->
           <template v-if="store.phase === 'event' && store.currentPlayer && !store.currentPlayer.isAI">
             <p style="color: #546e7a">📜 航海事件触发，请看屏幕中央…</p>
-            <button class="sr-btn sr-btn--primary" @click="store.endTurn">⏭ 继续</button>
+            <button class="sr-btn sr-btn--primary" @click="handleEventConfirm">⏭ 继续</button>
           </template>
 
           <!-- 回合结束 -->
@@ -261,7 +261,13 @@ function dismissEventModal() {
 }
 
 function handleEventConfirm() {
-  store.endTurn();
+  // 移动类事件（顺风/海市蜃楼）：先展示卡片，玩家确认后再执行移动（动画到达后结算落点）
+  if (store.hasPendingEventMove()) {
+    store.executePendingEventMove();
+    dismissEventModal();
+  } else {
+    store.endTurn();
+  }
 }
 
 // 事件触发（currentEvent 被设置）时弹出居中弹窗

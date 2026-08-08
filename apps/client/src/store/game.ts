@@ -223,6 +223,8 @@ export const useGameStore = defineStore('game', () => {
   let eventChainDepth = 0;
   // 待触发事件标记：棋子动画到达目标格后（notifyMoveFinished）才触发，避免移动途中弹窗
   let pendingEvent = false;
+  // 待执行的移动类事件效果（顺风/海市蜃楼）：先展示卡片，展示结束后再执行移动
+  let pendingEventMove: { type: 'forward'; value: number } | { type: 'teleport'; targetIndex: number } | null = null;
 
   // ---------- 计算属性 ----------
   const currentPlayer = computed(() => players.value[currentPlayerIndex.value] ?? null);
@@ -282,6 +284,7 @@ export const useGameStore = defineStore('game', () => {
     currentEvent.value = null;
     eventChainDepth = 0;
     pendingEvent = false;
+    pendingEventMove = null;
     properties.value = new Map();
     logs.value = [];
     mapItems.value = createDefaultPorts();
@@ -438,8 +441,9 @@ export const useGameStore = defineStore('game', () => {
       }
       case MapEventType.FairWind: {
         addLog('event', `🌬️ ${player.name} 遇到顺风，向前航行 ${card.value} 格！`);
-        movePlayer(card.value);
-        return true;
+        // 移动类事件：先展示卡片，展示结束后（executePendingEventMove）再执行移动
+        pendingEventMove = { type: 'forward', value: card.value };
+        return false;
       }
       case MapEventType.TradeBoom: {
         player.silver += card.value;
@@ -451,8 +455,9 @@ export const useGameStore = defineStore('game', () => {
         if (portItems.length > 0) {
           const target = portItems[Math.floor(Math.random() * portItems.length)];
           addLog('event', `✨ ${player.name} 被海市蜃楼迷惑，飘向 ${target.name}！`);
-          teleportTo(target.index, player);
-          return true;
+          // 移动类事件：先展示卡片，展示结束后（executePendingEventMove）再传送
+          pendingEventMove = { type: 'teleport', targetIndex: target.index };
+          return false;
         }
         addLog('event', `✨ ${player.name} 看到海市蜃楼，但船队稳住了方向。`);
         return false;
@@ -483,6 +488,8 @@ export const useGameStore = defineStore('game', () => {
 
   // ---------- 传送（海市蜃楼效果使用，直接到达目标格子并结算） ----------
   function teleportTo(targetIndex: number, player: PlayerInfo) {
+    // 标记移动开始，等待渲染层动画结束后再切换回合
+    notifyMoveStarted();
     const oldPos = player.position;
     player.position = targetIndex;
     addLog(
@@ -490,6 +497,23 @@ export const useGameStore = defineStore('game', () => {
       `${player.name} 从 ${mapItems.value[oldPos]?.name ?? oldPos} 来到 ${mapItems.value[targetIndex]?.name ?? targetIndex}`
     );
     settleLanding(player);
+  }
+
+  // ---------- 执行待定的事件移动（移动类事件：卡片展示结束后再移动） ----------
+  function executePendingEventMove() {
+    const player = currentPlayer.value;
+    if (!player || player.isBankrupt || !pendingEventMove) return;
+    const mv = pendingEventMove;
+    pendingEventMove = null;
+    if (mv.type === 'forward') {
+      movePlayer(mv.value);
+    } else {
+      teleportTo(mv.targetIndex, player);
+    }
+  }
+
+  function hasPendingEventMove(): boolean {
+    return pendingEventMove !== null;
   }
 
   // ---------- 事件效果详情（供 UI 弹窗展示） ----------
@@ -639,6 +663,7 @@ export const useGameStore = defineStore('game', () => {
     currentEvent.value = null;
     eventChainDepth = 0;
     pendingEvent = false;
+    pendingEventMove = null;
 
     // 检查破产
     if (player.silver <= 0 && !player.isBankrupt) {
@@ -729,6 +754,12 @@ export const useGameStore = defineStore('game', () => {
     // AI 触发事件后，棋子已到位、卡片已在屏幕中央弹出，给玩家足够时间查看再结束回合
     if (currentEvent.value) {
       await new Promise((r) => setTimeout(r, 1500));
+    }
+
+    // 移动类事件（顺风/海市蜃楼）：卡片展示结束后再执行移动，并等待移动动画完成
+    if (hasPendingEventMove()) {
+      executePendingEventMove();
+      await waitForMove();
     }
 
     endTurn();
@@ -845,6 +876,7 @@ export const useGameStore = defineStore('game', () => {
     currentEvent.value = null;
     eventChainDepth = 0;
     pendingEvent = false;
+    pendingEventMove = null;
     isGameStarted.value = false;
     isGameOver.value = false;
     winner.value = null;
@@ -883,5 +915,7 @@ export const useGameStore = defineStore('game', () => {
     waitForMove,
     resetGame,
     getEventEffectSummary,
+    executePendingEventMove,
+    hasPendingEventMove,
   };
 });

@@ -107,13 +107,21 @@ console.log('场景1: 人类玩家落在事件格');
   // 模拟棋子动画到达目标格
   store.notifyMoveFinished();
 
-  assert(['event', 'turn_end', 'port_action'].includes(store.phase), `事件后 phase 合法 (phase=${store.phase})`);
+  assert(store.phase === 'event', `事件展示阶段 (phase=${store.phase})`);
   assert(store.currentEvent !== null, '棋子到位后已抽到事件卡片');
   if (store.currentEvent) {
     assert(VALID_EFFECTS.has(store.currentEvent.effect), `卡片效果类型合法 (${store.currentEvent.effect})`);
   }
-  const effectHappened = human.silver !== sBefore || human.position !== pBefore || human.fleetLevel !== fBefore;
-  assert(effectHappened, '事件效果已生效（银两/位置/船队发生改变）');
+
+  // 移动类事件：卡片展示结束后才移动；纯效果事件：效果已立即生效
+  if (store.hasPendingEventMove()) {
+    const posBeforeMove = human.position;
+    store.executePendingEventMove();
+    assert(human.position !== posBeforeMove, '移动类事件：展示结束后才执行移动');
+    assert(['event', 'turn_end', 'port_action'].includes(store.phase), `移动后 phase 合法 (phase=${store.phase})`);
+  } else {
+    assert(human.silver !== sBefore, '纯效果事件：银两已立即变化');
+  }
 }
 
 // ---------- 场景2：事件结束后卡片被清空 ----------
@@ -128,6 +136,9 @@ console.log('场景2: endTurn 清空事件卡片');
   store.notifyMoveFinished();
   assert(store.currentEvent !== null, '棋子到位后事件卡片已展示');
 
+  if (store.hasPendingEventMove()) {
+    store.executePendingEventMove();
+  }
   store.endTurn();
   assert(store.currentEvent === null, 'endTurn 后事件卡片已清空');
   assert(store.phase === 'rolling_dice', `下一玩家进入掷骰阶段 (phase=${store.phase})`);
@@ -153,6 +164,9 @@ console.log('场景3: AI 玩家落在事件格');
   store.notifyMoveFinished();
 
   assert(store.currentEvent !== null, 'AI 也抽到了事件卡片');
+  if (store.hasPendingEventMove()) {
+    store.executePendingEventMove();
+  }
   const effectHappened = ai.silver !== sBefore || ai.position !== pBefore || ai.fleetLevel !== fBefore;
   assert(effectHappened, 'AI 的事件效果同样生效');
 }
@@ -168,6 +182,9 @@ console.log('场景4: 卡池类型覆盖（抽样统计）');
     placeBefore(store, human, cell.index);
     store.movePlayer(1);
     store.notifyMoveFinished();
+    if (store.hasPendingEventMove()) {
+      store.executePendingEventMove();
+    }
     if (store.currentEvent) {
       seen.add(store.currentEvent.effect);
     }
@@ -187,6 +204,9 @@ console.log('场景5: 压力测试（50 局）');
     placeBefore(store, human, cell.index);
     store.movePlayer(1);
     store.notifyMoveFinished();
+    if (store.hasPendingEventMove()) {
+      store.executePendingEventMove();
+    }
     if (!['event', 'turn_end', 'port_action'].includes(store.phase)) {
       ok = false;
       console.log(`  ❌ 第 ${i + 1} 局 phase 异常: ${store.phase}`);
