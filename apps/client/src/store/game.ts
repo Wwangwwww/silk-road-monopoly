@@ -751,9 +751,9 @@ export const useGameStore = defineStore('game', () => {
     // 等待当前 AI 的帆船动画完全走完，再切换到下一个（保证按顺序行动）
     await waitForMove();
 
-    // AI 触发事件后，棋子已到位、卡片已在屏幕中央弹出，给玩家足够时间查看再结束回合
+    // AI 触发事件后，棋子已到位、卡片已在屏幕中央弹出，给玩家 3 秒时间查看再结束回合
     if (currentEvent.value) {
-      await new Promise((r) => setTimeout(r, 1500));
+      await new Promise((r) => setTimeout(r, 3000));
     }
 
     // 移动类事件（顺风/海市蜃楼）：卡片展示结束后再执行移动，并等待移动动画完成
