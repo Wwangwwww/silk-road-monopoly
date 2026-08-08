@@ -26,11 +26,11 @@ defineProps<{
   box-shadow: 0 4px 16px rgba(0, 56, 68, 0.15);
 }
 .sr-chance-card--chance .sr-chance-card__header {
-  background: linear-gradient(135deg, #00838F, #00ACC1);
+  background: linear-gradient(135deg, #00838f, #00acc1);
 }
 .sr-chance-card--fate .sr-chance-card__header {
-  background: linear-gradient(135deg, #E8B84B, #F4D03F);
-  color: #5D4037;
+  background: linear-gradient(135deg, #e8b84b, #f4d03f);
+  color: #5d4037;
 }
 .sr-chance-card__header {
   padding: 10px 16px;
@@ -43,12 +43,12 @@ defineProps<{
 }
 .sr-chance-card__body h3 {
   font-size: 16px;
-  color: #1A3A40;
+  color: #1a3a40;
   margin-bottom: 8px;
 }
 .sr-chance-card__body p {
   font-size: 13px;
-  color: #546E7A;
+  color: #546e7a;
   line-height: 1.5;
 }
 </style>

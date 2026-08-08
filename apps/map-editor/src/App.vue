@@ -9,15 +9,22 @@
   </div>
 </template>
 
-<script setup lang="ts">
-</script>
+<script setup lang="ts"></script>
 
 <style scoped>
-.map-editor { min-height: 100vh; display: flex; flex-direction: column; }
+.map-editor {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 .editor-header {
-  background: linear-gradient(135deg, #00838F, #006064);
+  background: linear-gradient(135deg, #00838f, #006064);
   color: #fff;
   padding: 12px 24px;
 }
-.editor-main { flex: 1; padding: 24px; background: #F0F7F8; }
+.editor-main {
+  flex: 1;
+  padding: 24px;
+  background: #f0f7f8;
+}
 </style>

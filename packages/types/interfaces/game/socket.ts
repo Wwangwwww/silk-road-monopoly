@@ -4,43 +4,43 @@
 export enum SocketMsgType {
   // 基础
   Heart = 'heart',
-  
+
   // 房间
   JoinRoom = 'join_room',
   LeaveRoom = 'leave_room',
   CreateRoom = 'create_room',
   RoomList = 'room_list',
   RoomUpdate = 'room_update',
-  
+
   // 游戏
   GameStart = 'game_start',
   GameData = 'game_data',
   GameOver = 'game_over',
-  
+
   // 玩家操作
   PlayerReady = 'player_ready',
   RollDice = 'roll_dice',
   RollDiceResult = 'roll_dice_result',
   PlayerMove = 'player_move',
   PlayerAction = 'player_action',
-  
+
   // 交易
   TradeOffer = 'trade_offer',
   TradeResponse = 'trade_response',
   TradeComplete = 'trade_complete',
-  
+
   // UI
   ButtonRegister = 'button_register',
   UI = 'ui',
   FormDialog = 'form_dialog',
   MessageCard = 'message_card',
-  
+
   // 地图
   MapChunk = 'map_chunk',
-  
+
   // 聊天
   Chat = 'chat',
-  
+
   // 系统
   Error = 'error',
   System = 'system',

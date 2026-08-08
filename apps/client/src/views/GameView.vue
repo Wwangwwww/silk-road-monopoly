@@ -26,12 +26,8 @@
             </select>
           </label>
         </div>
-        <button class="sr-btn sr-btn--primary setup-btn" @click="startGame">
-          ⛵ 扬帆起航
-        </button>
-        <button class="sr-btn sr-btn--secondary setup-btn" @click="$router.push('/')">
-          返回
-        </button>
+        <button class="sr-btn sr-btn--primary setup-btn" @click="startGame">⛵ 扬帆起航</button>
+        <button class="sr-btn sr-btn--secondary setup-btn" @click="$router.push('/')">返回</button>
       </div>
     </div>
 
@@ -110,20 +106,14 @@
           <!-- 港口操作 -->
           <template v-if="store.phase === 'port_action' && store.currentPlayer && !store.currentPlayer.isAI">
             <div class="action-label">停靠在：{{ store.mapItems[store.currentPlayer.position]?.name }}</div>
-            <button class="sr-btn sr-btn--primary" @click="handleBuyPort" v-if="canBuyPort">
-              🏪 购买港口
-            </button>
-            <button class="sr-btn sr-btn--secondary" @click="store.endTurn">
-              ⏭ 跳过
-            </button>
+            <button class="sr-btn sr-btn--primary" @click="handleBuyPort" v-if="canBuyPort">🏪 购买港口</button>
+            <button class="sr-btn sr-btn--secondary" @click="store.endTurn">⏭ 跳过</button>
           </template>
 
           <!-- 事件阶段 -->
           <template v-if="store.phase === 'event' && store.currentPlayer && !store.currentPlayer.isAI">
-            <p style="color: #546E7A;">📜 航海事件...</p>
-            <button class="sr-btn sr-btn--primary" @click="store.endTurn">
-              ⏭ 继续
-            </button>
+            <p style="color: #546e7a">📜 航海事件...</p>
+            <button class="sr-btn sr-btn--primary" @click="store.endTurn">⏭ 继续</button>
           </template>
 
           <!-- 回合结束 -->
@@ -145,13 +135,7 @@
           </button>
 
           <!-- 游戏结束 -->
-          <button
-            v-if="store.isGameOver"
-            class="sr-btn sr-btn--primary"
-            @click="handleRestart"
-          >
-            🔄 再来一局
-          </button>
+          <button v-if="store.isGameOver" class="sr-btn sr-btn--primary" @click="handleRestart">🔄 再来一局</button>
         </div>
 
         <!-- 所有玩家列表 -->
@@ -200,7 +184,7 @@ async function handleRollDice() {
   const result = store.rollDice();
 
   // 停留 2 秒展示点数
-  await new Promise(r => setTimeout(r, 2000));
+  await new Promise((r) => setTimeout(r, 2000));
 
   store.movePlayer(result.total);
   isRolling.value = false;
@@ -223,7 +207,7 @@ const canBuyPort = computed(() => {
   const item = store.mapItems[player.position];
   if (!item || item.type !== 'port') return false;
   if (store.properties.has(item.id)) return false;
-  return (player.silver >= (item.basePrice ?? Infinity));
+  return player.silver >= (item.basePrice ?? Infinity);
 });
 
 function handleBuyPort() {
@@ -246,7 +230,7 @@ function handleRestart() {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #0D3B42 0%, #00838F 50%, #00ACC1 100%);
+  background: linear-gradient(135deg, #0d3b42 0%, #00838f 50%, #00acc1 100%);
 }
 .setup-card {
   background: #fff;
@@ -257,7 +241,7 @@ function handleRestart() {
 }
 .setup-card h2 {
   text-align: center;
-  color: #00695C;
+  color: #00695c;
   margin-bottom: 24px;
   font-size: 24px;
 }
@@ -266,17 +250,17 @@ function handleRestart() {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
-  color: #37474F;
+  color: #37474f;
   font-size: 15px;
 }
 .setup-form input,
 .setup-form select {
   width: 180px;
   padding: 8px 12px;
-  border: 1px solid #B2DFDB;
+  border: 1px solid #b2dfdb;
   border-radius: 8px;
   font-size: 14px;
-  background: #F0F7F8;
+  background: #f0f7f8;
 }
 .setup-btn {
   width: 100%;
@@ -291,7 +275,7 @@ function handleRestart() {
 }
 .game-view__board {
   flex: 1;
-  background: #0D3B42;
+  background: #0d3b42;
   position: relative;
   overflow: hidden;
 }
@@ -306,7 +290,7 @@ function handleRestart() {
   overflow-y: auto;
 }
 .log-line {
-  color: #B2DFDB;
+  color: #b2dfdb;
   font-size: 11px;
   line-height: 1.5;
   font-family: monospace;
@@ -316,18 +300,18 @@ function handleRestart() {
 .game-view__panel {
   width: 320px;
   background: #fff;
-  border-left: 1px solid #E0F2F1;
+  border-left: 1px solid #e0f2f1;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
 }
 .panel-section {
   padding: 16px;
-  border-bottom: 1px solid #E0F2F1;
+  border-bottom: 1px solid #e0f2f1;
 }
 .panel-section h3 {
   font-size: 13px;
-  color: #78909C;
+  color: #78909c;
   margin-bottom: 12px;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -340,7 +324,7 @@ function handleRestart() {
   margin-bottom: 12px;
 }
 .current-player.is-human {
-  background: #E0F7FA;
+  background: #e0f7fa;
   border-radius: 10px;
   padding: 10px;
 }
@@ -353,15 +337,15 @@ function handleRestart() {
 }
 .player-info strong {
   font-size: 16px;
-  color: #00695C;
+  color: #00695c;
 }
 .player-info span {
   font-size: 12px;
-  color: #90A4AE;
+  color: #90a4ae;
 }
 .player-stats {
   font-size: 13px;
-  color: #546E7A;
+  color: #546e7a;
   line-height: 1.8;
 }
 
@@ -397,7 +381,7 @@ function handleRestart() {
   align-items: center;
   justify-content: center;
   background: #fff;
-  border: 3px solid #E2E8F0;
+  border: 3px solid #e2e8f0;
   border-radius: 12px;
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
   backface-visibility: hidden;
@@ -411,31 +395,63 @@ function handleRestart() {
   line-height: 1;
 }
 
-.dice-front  { transform: translateZ(36px); }
-.dice-back   { transform: rotateY(180deg) translateZ(36px); }
-.dice-right  { transform: rotateY(90deg) translateZ(36px); }
-.dice-left   { transform: rotateY(-90deg) translateZ(36px); }
-.dice-top    { transform: rotateX(90deg) translateZ(36px); }
-.dice-bottom { transform: rotateX(-90deg) translateZ(36px); }
+.dice-front {
+  transform: translateZ(36px);
+}
+.dice-back {
+  transform: rotateY(180deg) translateZ(36px);
+}
+.dice-right {
+  transform: rotateY(90deg) translateZ(36px);
+}
+.dice-left {
+  transform: rotateY(-90deg) translateZ(36px);
+}
+.dice-top {
+  transform: rotateX(90deg) translateZ(36px);
+}
+.dice-bottom {
+  transform: rotateX(-90deg) translateZ(36px);
+}
 
 /* 各面点数显示 */
-.dice-show-1 .dice-cube { transform: rotateX(0deg) rotateY(0deg); }
-.dice-show-2 .dice-cube { transform: rotateX(-90deg) rotateY(0deg); }
-.dice-show-3 .dice-cube { transform: rotateX(0deg) rotateY(-90deg); }
-.dice-show-4 .dice-cube { transform: rotateX(0deg) rotateY(90deg); }
-.dice-show-5 .dice-cube { transform: rotateX(90deg) rotateY(0deg); }
-.dice-show-6 .dice-cube { transform: rotateX(0deg) rotateY(180deg); }
+.dice-show-1 .dice-cube {
+  transform: rotateX(0deg) rotateY(0deg);
+}
+.dice-show-2 .dice-cube {
+  transform: rotateX(-90deg) rotateY(0deg);
+}
+.dice-show-3 .dice-cube {
+  transform: rotateX(0deg) rotateY(-90deg);
+}
+.dice-show-4 .dice-cube {
+  transform: rotateX(0deg) rotateY(90deg);
+}
+.dice-show-5 .dice-cube {
+  transform: rotateX(90deg) rotateY(0deg);
+}
+.dice-show-6 .dice-cube {
+  transform: rotateX(0deg) rotateY(180deg);
+}
 
 @keyframes dice-roll {
-  0%   { transform: rotateX(720deg) rotateY(360deg) rotateZ(180deg); }
-  30%  { transform: rotateX(540deg) rotateY(270deg) rotateZ(90deg); }
-  60%  { transform: rotateX(180deg) rotateY(90deg) rotateZ(30deg); }
-  100% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+  0% {
+    transform: rotateX(720deg) rotateY(360deg) rotateZ(180deg);
+  }
+  30% {
+    transform: rotateX(540deg) rotateY(270deg) rotateZ(90deg);
+  }
+  60% {
+    transform: rotateX(180deg) rotateY(90deg) rotateZ(30deg);
+  }
+  100% {
+    transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+  }
 }
 
 .dice-total {
   font-size: 15px;
-  color: #37474F;
+  color: #37474f;
   font-weight: 600;
 }
 
@@ -445,9 +461,15 @@ function handleRestart() {
 }
 
 @keyframes btn-breathe {
-  0%   { background: linear-gradient(135deg, #00838F, #00ACC1); }
-  50%  { background: linear-gradient(135deg, #00ACC1, #26C6DA); }
-  100% { background: linear-gradient(135deg, #00838F, #00ACC1); }
+  0% {
+    background: linear-gradient(135deg, #00838f, #00acc1);
+  }
+  50% {
+    background: linear-gradient(135deg, #00acc1, #26c6da);
+  }
+  100% {
+    background: linear-gradient(135deg, #00838f, #00acc1);
+  }
 }
 
 .panel-actions {
@@ -460,7 +482,7 @@ function handleRestart() {
 }
 .action-label {
   font-size: 13px;
-  color: #546E7A;
+  color: #546e7a;
   text-align: center;
   padding: 4px 0;
 }
@@ -471,10 +493,10 @@ function handleRestart() {
   align-items: center;
   padding: 8px 0;
   font-size: 13px;
-  border-bottom: 1px solid #F5F5F5;
+  border-bottom: 1px solid #f5f5f5;
 }
 .player-row.is-active {
-  background: #E8F5E9;
+  background: #e8f5e9;
   margin: 0 -16px;
   padding: 8px 16px;
   border-radius: 6px;
@@ -484,6 +506,6 @@ function handleRestart() {
   text-decoration: line-through;
 }
 .text-danger {
-  color: #E53935;
+  color: #e53935;
 }
 </style>

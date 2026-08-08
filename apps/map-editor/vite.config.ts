@@ -9,7 +9,13 @@ export default defineConfig({
     vue(),
     electron([
       { entry: 'electron/main.ts', vite: { build: { outDir: 'dist-electron' } } },
-      { entry: 'electron/preload.ts', onstart(args) { args.reload(); }, vite: { build: { outDir: 'dist-electron' } } },
+      {
+        entry: 'electron/preload.ts',
+        onstart(args) {
+          args.reload();
+        },
+        vite: { build: { outDir: 'dist-electron' } },
+      },
     ]),
     renderer(),
   ],

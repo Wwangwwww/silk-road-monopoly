@@ -16,7 +16,7 @@ export function normalizePhases(phases: any[]): any[] {
  */
 export function normalizeGameMap(map: any): any {
   if (!map) return null;
-  
+
   return {
     ...map,
     items: map.items || map.ports || [],

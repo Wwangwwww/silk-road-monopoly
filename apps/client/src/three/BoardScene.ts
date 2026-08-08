@@ -25,15 +25,31 @@ export interface BoardProperty {
 }
 
 const GROUP_COLOR: Record<string, number> = {
-  blue: 0x1e88e5, green: 0x43a047, orange: 0xfb8c00, red: 0xe53935, purple: 0x8e24aa,
+  blue: 0x1e88e5,
+  green: 0x43a047,
+  orange: 0xfb8c00,
+  red: 0xe53935,
+  purple: 0x8e24aa,
 };
 const TYPE_COLOR: Record<string, number> = {
-  start_port: 0x00838f, port: 0x4fc3f7, chance: 0x26a69a, fate: 0x26a69a,
-  tax: 0x78909c, jail: 0x6d4c41, go_to_jail: 0x5d4037, free_port: 0x7cb342,
+  start_port: 0x00838f,
+  port: 0x4fc3f7,
+  chance: 0x26a69a,
+  fate: 0x26a69a,
+  tax: 0x78909c,
+  jail: 0x6d4c41,
+  go_to_jail: 0x5d4037,
+  free_port: 0x7cb342,
 };
 const TYPE_ICON: Record<string, string> = {
-  start_port: '⚓', port: '🏯', chance: '🌊', fate: '🌀',
-  tax: '⚖️', jail: '⛓️', go_to_jail: '🏴‍☠️', free_port: '⛵',
+  start_port: '⚓',
+  port: '🏯',
+  chance: '🌊',
+  fate: '🌀',
+  tax: '⚖️',
+  jail: '⛓️',
+  go_to_jail: '🏴‍☠️',
+  free_port: '⛵',
 };
 const SHIP_COLORS = [0xff7043, 0xffca28, 0x66bb6a, 0x29b6f6, 0xab47bc, 0xff5252];
 
@@ -116,7 +132,7 @@ export class BoardScene {
     this.scene.add(fill);
   }
 
-    private buildSeaAndBoard() {
+  private buildSeaAndBoard() {
     const inner = HALF_WIDTH + CELL_SIZE * 0.5;
     const seaGeom = new THREE.PlaneGeometry(inner * 2.4, inner * 2.4);
     this.seaMesh = new THREE.Mesh(
@@ -174,11 +190,10 @@ export class BoardScene {
 
       const div = document.createElement('div');
       div.className = 'sr-cell-label';
-      const icon = cell ? TYPE_ICON[cell.type] ?? '' : '';
+      const icon = cell ? (TYPE_ICON[cell.type] ?? '') : '';
       const price = cell?.basePrice ? `<div class="sr-cell-price">${cell.basePrice}</div>` : '';
       div.innerHTML =
-        `<div class="sr-cell-icon">${icon}</div>` +
-        `<div class="sr-cell-name">${cell?.name ?? i}</div>` + price;
+        `<div class="sr-cell-icon">${icon}</div>` + `<div class="sr-cell-name">${cell?.name ?? i}</div>` + price;
       const label = new CSS2DObject(div);
       label.position.set(x, CELL_HEIGHT + 0.35, z);
       this.scene.add(label);
@@ -194,7 +209,7 @@ export class BoardScene {
     return TYPE_COLOR[cell.type] ?? 0x37474f;
   }
 
-    updateProperties(properties: BoardProperty[]) {
+  updateProperties(properties: BoardProperty[]) {
     this.portMarkers.forEach((g) => this.scene.remove(g));
     this.portMarkers.clear();
     for (const prop of properties) {
@@ -332,10 +347,7 @@ export class BoardScene {
   private buildShip(color: number): THREE.Group {
     const group = new THREE.Group();
 
-    const hull = new THREE.Mesh(
-      new THREE.BoxGeometry(0.5, 0.14, 0.3),
-      new THREE.MeshStandardMaterial({ color })
-    );
+    const hull = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.14, 0.3), new THREE.MeshStandardMaterial({ color }));
     hull.position.y = 0.08;
     hull.castShadow = true;
     group.add(hull);
@@ -362,17 +374,14 @@ export class BoardScene {
     sail.position.set(0, 0.5, 0);
     group.add(sail);
 
-    const flag = new THREE.Mesh(
-      new THREE.BoxGeometry(0.16, 0.06, 0.02),
-      new THREE.MeshStandardMaterial({ color })
-    );
+    const flag = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.06, 0.02), new THREE.MeshStandardMaterial({ color }));
     flag.position.set(0.12, 0.72, 0);
     group.add(flag);
 
     return group;
   }
 
-    private buildHighlight() {
+  private buildHighlight() {
     this.highlightRing = new THREE.Mesh(
       new THREE.RingGeometry(0.68, 0.82, 32),
       new THREE.MeshBasicMaterial({ color: 0xffeb3b, transparent: true, opacity: 0.9, side: THREE.DoubleSide })
@@ -406,8 +415,7 @@ export class BoardScene {
 
     if (this.highlightRing.visible && this.highlightRing.userData.pulse) {
       this.highlightRing.scale.setScalar(1 + Math.sin(t * 4) * 0.12);
-      (this.highlightRing.material as THREE.MeshBasicMaterial).opacity =
-        0.55 + Math.sin(t * 4) * 0.25;
+      (this.highlightRing.material as THREE.MeshBasicMaterial).opacity = 0.55 + Math.sin(t * 4) * 0.25;
     }
 
     const hadMoving = this.shipPaths.size > 0;
@@ -477,4 +485,3 @@ export class BoardScene {
     }
   }
 }
-

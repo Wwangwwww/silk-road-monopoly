@@ -1,6 +1,6 @@
 /**
  * 海上丝绸之路大富翁 - 核心游戏类型定义
- * 
+ *
  * 主题映射：
  * - 街道(Street) → 港口(Port)
  * - 地产(Property) → 商埠/贸易站(TradingPost)
@@ -162,7 +162,7 @@ export interface GameMapInfo {
   thumbnail?: string;
 }
 
-/** 地图事件 */ 
+/** 地图事件 */
 export interface MapEvent {
   id: string;
   type: MapEventType;

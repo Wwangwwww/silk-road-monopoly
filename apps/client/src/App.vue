@@ -13,6 +13,6 @@
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  background: #F0F7F8;
+  background: #f0f7f8;
 }
 </style>

@@ -25,7 +25,9 @@ const iconMap = {
 };
 
 if (props.duration && props.duration > 0) {
-  setTimeout(() => { visible.value = false; }, props.duration);
+  setTimeout(() => {
+    visible.value = false;
+  }, props.duration);
 }
 </script>
 
@@ -35,13 +37,24 @@ if (props.duration && props.duration > 0) {
   align-items: center;
   padding: 12px 20px;
   border-radius: 8px;
-  background: #E0F7FA;
-  color: #00838F;
+  background: #e0f7fa;
+  color: #00838f;
   font-size: 14px;
   box-shadow: 0 2px 8px rgba(0, 56, 68, 0.1);
 }
-.sr-message--success { background: #E8F5E9; color: #2E7D32; }
-.sr-message--warning { background: #FFF3E0; color: #F57C00; }
-.sr-message--error { background: #FFEBEE; color: #C62828; }
-.sr-message__icon { margin-right: 8px; }
+.sr-message--success {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+.sr-message--warning {
+  background: #fff3e0;
+  color: #f57c00;
+}
+.sr-message--error {
+  background: #ffebee;
+  color: #c62828;
+}
+.sr-message__icon {
+  margin-right: 8px;
+}
 </style>

@@ -17,7 +17,8 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   font-family: $sr-font-family;
   font-size: $sr-font-size-base;
   color: $sr-color-text-primary;
@@ -41,26 +42,36 @@ html, body {
   transition: all 0.2s ease;
   font-family: inherit;
 
-  &:hover { transform: translateY(-1px); }
-  &:active { transform: translateY(0); }
+  &:hover {
+    transform: translateY(-1px);
+  }
+  &:active {
+    transform: translateY(0);
+  }
 
   &--primary {
-    background: linear-gradient(135deg, #00838F, #00ACC1);
+    background: linear-gradient(135deg, #00838f, #00acc1);
     color: #fff;
     box-shadow: 0 4px 14px rgba(0, 131, 143, 0.35);
-    &:hover { box-shadow: 0 6px 20px rgba(0, 131, 143, 0.45); }
+    &:hover {
+      box-shadow: 0 6px 20px rgba(0, 131, 143, 0.45);
+    }
   }
 
   &--secondary {
-    background: #E0F2F1;
-    color: #00695C;
-    &:hover { background: #B2DFDB; }
+    background: #e0f2f1;
+    color: #00695c;
+    &:hover {
+      background: #b2dfdb;
+    }
   }
 
   &--danger {
-    background: #EF5350;
+    background: #ef5350;
     color: #fff;
-    &:hover { background: #E53935; }
+    &:hover {
+      background: #e53935;
+    }
   }
 
   &:disabled {

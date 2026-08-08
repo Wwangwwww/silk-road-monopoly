@@ -6,9 +6,7 @@
       <span class="hud-round">第 {{ store.currentRound }} 回合</span>
       <span class="hud-phase">{{ phaseText }}</span>
     </div>
-    <div v-if="store.isGameOver && store.winner" class="game-board__winner">
-      🏆 {{ store.winner.name }} 赢得胜利！
-    </div>
+    <div v-if="store.isGameOver && store.winner" class="game-board__winner">🏆 {{ store.winner.name }} 赢得胜利！</div>
     <div v-if="!store.isGameStarted" class="game-board__empty">🐚 等待出海…</div>
   </div>
 </template>
@@ -203,9 +201,17 @@ watch(
   animation: sr-win-pop 0.5s ease-out;
 }
 @keyframes sr-win-pop {
-  0% { transform: translate(-50%, -50%) scale(0.6); opacity: 0; }
-  80% { transform: translate(-50%, -50%) scale(1.05); }
-  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  0% {
+    transform: translate(-50%, -50%) scale(0.6);
+    opacity: 0;
+  }
+  80% {
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
 }
 .game-board__empty {
   position: absolute;

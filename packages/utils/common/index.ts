@@ -32,8 +32,8 @@ export function modifyColor(hex: string, amount: number): string {
   const color = hex.replace('#', '');
   const num = parseInt(color, 16);
   const r = Math.min(255, Math.max(0, (num >> 16) + amount));
-  const g = Math.min(255, Math.max(0, ((num >> 8) & 0x00FF) + amount));
-  const b = Math.min(255, Math.max(0, (num & 0x0000FF) + amount));
+  const g = Math.min(255, Math.max(0, ((num >> 8) & 0x00ff) + amount));
+  const b = Math.min(255, Math.max(0, (num & 0x0000ff) + amount));
   return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, '0')}`;
 }
 
@@ -51,7 +51,12 @@ export function randomRGB(): string {
  * 随机HEX颜色
  */
 export function randomHEX(): string {
-  return '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+  return (
+    '#' +
+    Math.floor(Math.random() * 16777215)
+      .toString(16)
+      .padStart(6, '0')
+  );
 }
 
 /**

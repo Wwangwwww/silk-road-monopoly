@@ -1,12 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import type {
-  GameData,
-  PlayerInfo,
-  DiceResult,
-  GameLog,
-  PropertyInfo,
-} from '@silk-road-monopoly/types';
+import type { GameData, PlayerInfo, DiceResult, GameLog, PropertyInfo } from '@silk-road-monopoly/types';
 import { GamePhaseMark } from '@silk-road-monopoly/types';
 
 // ==================== 默认地图数据（临时内置，后续从地图文件加载） ====================
@@ -56,7 +50,14 @@ function createDefaultPorts() {
             Math.floor(p.basePrice * 1.5),
             Math.floor(p.basePrice * 2),
           ],
-          upgradeCosts: [0, Math.floor(p.basePrice * 0.5), Math.floor(p.basePrice * 0.75), Math.floor(p.basePrice * 1), Math.floor(p.basePrice * 1.5), Math.floor(p.basePrice * 2)],
+          upgradeCosts: [
+            0,
+            Math.floor(p.basePrice * 0.5),
+            Math.floor(p.basePrice * 0.75),
+            Math.floor(p.basePrice * 1),
+            Math.floor(p.basePrice * 1.5),
+            Math.floor(p.basePrice * 2),
+          ],
           colorGroup: p.colorGroup,
           specialty: p.specialty,
         });
@@ -93,8 +94,8 @@ export const useGameStore = defineStore('game', () => {
 
   // ---------- 计算属性 ----------
   const currentPlayer = computed(() => players.value[currentPlayerIndex.value] ?? null);
-  const humanPlayer = computed(() => players.value.find(p => !p.isAI) ?? null);
-  const aiPlayers = computed(() => players.value.filter(p => p.isAI));
+  const humanPlayer = computed(() => players.value.find((p) => !p.isAI) ?? null);
+  const aiPlayers = computed(() => players.value.filter((p) => p.isAI));
 
   // ---------- 初始化游戏 ----------
   function initGame(playerName: string, aiCount: number = 3) {
@@ -192,7 +193,10 @@ export const useGameStore = defineStore('game', () => {
     }
 
     player.position = newPos;
-    addLog('move', `${player.name} 从 ${mapItems.value[oldPos]?.name ?? oldPos} 移动到 ${mapItems.value[newPos]?.name ?? newPos}`);
+    addLog(
+      'move',
+      `${player.name} 从 ${mapItems.value[oldPos]?.name ?? oldPos} 移动到 ${mapItems.value[newPos]?.name ?? newPos}`
+    );
 
     // 进入阶段转换
     const landedItem = mapItems.value[newPos];
@@ -294,7 +298,7 @@ export const useGameStore = defineStore('game', () => {
     if (!tollFees) return;
 
     const fee = tollFees[prop.level] || tollFees[0];
-    const owner = players.value.find(p => p.id === prop.ownerId);
+    const owner = players.value.find((p) => p.id === prop.ownerId);
     if (!owner) return;
 
     const actualPay = Math.min(fee, player.silver);
@@ -306,7 +310,7 @@ export const useGameStore = defineStore('game', () => {
 
   // ---------- 监狱相关 ----------
   function sendToJail(playerId: string) {
-    const player = players.value.find(p => p.id === playerId);
+    const player = players.value.find((p) => p.id === playerId);
     if (!player) return;
 
     player.inJail = true;
@@ -317,7 +321,7 @@ export const useGameStore = defineStore('game', () => {
   }
 
   function releaseFromJailSilent(playerId: string) {
-    const player = players.value.find(p => p.id === playerId);
+    const player = players.value.find((p) => p.id === playerId);
     if (!player) return;
     player.inJail = false;
     player.jailTurns = 0;
@@ -359,7 +363,7 @@ export const useGameStore = defineStore('game', () => {
     }
 
     // 检查胜利条件：只剩一个玩家
-    const alivePlayers = players.value.filter(p => !p.isBankrupt);
+    const alivePlayers = players.value.filter((p) => !p.isBankrupt);
     if (alivePlayers.length <= 1) {
       isGameOver.value = true;
       winner.value = alivePlayers[0] ?? null;
@@ -392,7 +396,7 @@ export const useGameStore = defineStore('game', () => {
     if (!player || !player.isAI || player.isBankrupt || isGameOver.value) return;
 
     // 等待让玩家看到 AI 的回合
-    await new Promise(r => setTimeout(r, 800));
+    await new Promise((r) => setTimeout(r, 800));
 
     // --- 监狱处理 ---
     if (player.inJail) {
@@ -417,7 +421,7 @@ export const useGameStore = defineStore('game', () => {
 
     // --- 掷骰子 & 移动 ---
     const result = rollDice();
-    await new Promise(r => setTimeout(r, 600));
+    await new Promise((r) => setTimeout(r, 600));
     movePlayer(result.total);
 
     // --- 根据落脚格子类型处理 ---
@@ -425,12 +429,12 @@ export const useGameStore = defineStore('game', () => {
 
     switch (phase.value) {
       case GamePhaseMark.PortAction: {
-        await new Promise(r => setTimeout(r, 400));
+        await new Promise((r) => setTimeout(r, 400));
         handleAIPortAction(player, landedItem);
         break;
       }
       case GamePhaseMark.Event: {
-        await new Promise(r => setTimeout(r, 400));
+        await new Promise((r) => setTimeout(r, 400));
         handleAIEvent(player);
         break;
       }
@@ -502,7 +506,7 @@ export const useGameStore = defineStore('game', () => {
 
   // --- AI 人格系统 ---
   interface AIPersonality {
-    aggression: number;   // 0-1 攻击性（高→更积极购买/升级）
+    aggression: number; // 0-1 攻击性（高→更积极购买/升级）
     riskTolerance: number; // 0-1 风险承受
     tradePreference: number; // 0-1 贸易偏好
   }
@@ -514,7 +518,7 @@ export const useGameStore = defineStore('game', () => {
       // 基于玩家 ID 生成确定性人格（同一 AI 始终同一人格）
       const hash = playerId.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
       aiPersonalities.set(playerId, {
-        aggression: 0.3 + (hash % 7) * 0.1,     // 0.3 ~ 0.9
+        aggression: 0.3 + (hash % 7) * 0.1, // 0.3 ~ 0.9
         riskTolerance: 0.3 + ((hash * 3) % 7) * 0.1,
         tradePreference: 0.3 + ((hash * 5) % 7) * 0.1,
       });

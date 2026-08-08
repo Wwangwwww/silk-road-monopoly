@@ -1,16 +1,16 @@
 {
-	"compilerOptions": {
-		"target": "ESNext",
-		"module": "ESNext",
-		"moduleResolution": "Bundler",
-		"strict": true,
-		"esModuleInterop": true,
-		"skipLibCheck": true,
-		"outDir": "dist",
-		"rootDir": ".",
-		"paths": {
-			"#src/*": ["./src/*"]
-		}
-	},
-	"include": ["app.ts", "src/**/*"]
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "outDir": "dist",
+    "rootDir": ".",
+    "paths": {
+      "#src/*": ["./src/*"]
+    }
+  },
+  "include": ["app.ts", "src/**/*"]
 }

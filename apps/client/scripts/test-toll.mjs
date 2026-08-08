@@ -19,8 +19,18 @@ const root = path.resolve(__dirname, '../../..');
 
 // --- 找到 esbuild（pnpm 内部版本） ---
 const pnpmDir = path.join(root, 'node_modules', '.pnpm');
-const esbuildDirs = fs.readdirSync(pnpmDir).filter(d => d.startsWith('esbuild@')).sort();
-const esbuildPath = path.join(pnpmDir, esbuildDirs[esbuildDirs.length - 1], 'node_modules', 'esbuild', 'lib', 'main.js');
+const esbuildDirs = fs
+  .readdirSync(pnpmDir)
+  .filter((d) => d.startsWith('esbuild@'))
+  .sort();
+const esbuildPath = path.join(
+  pnpmDir,
+  esbuildDirs[esbuildDirs.length - 1],
+  'node_modules',
+  'esbuild',
+  'lib',
+  'main.js'
+);
 const esbuild = require(esbuildPath);
 
 // --- 将真实 store 打包为可运行 ESM ---
@@ -42,8 +52,13 @@ setActivePinia(createPinia());
 let passed = 0;
 let failed = 0;
 function assert(cond, msg) {
-  if (cond) { passed++; console.log('  ✅ ' + msg); }
-  else { failed++; console.log('  ❌ ' + msg); }
+  if (cond) {
+    passed++;
+    console.log('  ✅ ' + msg);
+  } else {
+    failed++;
+    console.log('  ❌ ' + msg);
+  }
 }
 
 function newGame() {
@@ -65,7 +80,7 @@ console.log('场景1: 人类玩家落在 AI 港口');
   const store = newGame();
   const human = store.humanPlayer;
   const ai = store.aiPlayers[0];
-  const port = store.mapItems.find(p => p.type === 'port');
+  const port = store.mapItems.find((p) => p.type === 'port');
   store.properties.set(port.id, { portId: port.id, ownerId: ai.id, level: 0, isMortgaged: false });
   ai.ports.push(port.id);
   const fee = port.tollFees[0];
@@ -77,7 +92,10 @@ console.log('场景1: 人类玩家落在 AI 港口');
 
   assert(human.silver === hBefore - fee, `人类落脚后过路费已自动扣除 (${hBefore} → ${human.silver}, 应收 ${fee})`);
   assert(ai.silver === aBefore + fee, `港口所有者 AI 已收到过路费 (${aBefore} → ${ai.silver})`);
-  assert(store.phase === PHASES.TurnEnd, `有主港口落脚后直接进入回合结束 (phase=${store.phase})，不会出现可“跳过”的 port_action 界面`);
+  assert(
+    store.phase === PHASES.TurnEnd,
+    `有主港口落脚后直接进入回合结束 (phase=${store.phase})，不会出现可“跳过”的 port_action 界面`
+  );
 
   const afterMove = human.silver;
   store.endTurn(); // 旧 bug 路径：点“跳过/结束回合”
@@ -90,7 +108,7 @@ console.log('场景2: AI 玩家落在人类港口');
   const store = newGame();
   const human = store.humanPlayer;
   const ai = store.aiPlayers[0];
-  const port = store.mapItems.find(p => p.type === 'port');
+  const port = store.mapItems.find((p) => p.type === 'port');
   store.properties.set(port.id, { portId: port.id, ownerId: human.id, level: 0, isMortgaged: false });
   human.ports.push(port.id);
   const fee = port.tollFees[0];
@@ -112,7 +130,7 @@ console.log('场景3: 无主港口购买回归');
 {
   const store = newGame();
   const human = store.humanPlayer;
-  const port = store.mapItems.find(p => p.type === 'port' && !store.properties.has(p.id));
+  const port = store.mapItems.find((p) => p.type === 'port' && !store.properties.has(p.id));
 
   placeBefore(store, human, port.index);
   store.movePlayer(1);
@@ -128,7 +146,7 @@ console.log('场景4: 落在自己港口');
 {
   const store = newGame();
   const human = store.humanPlayer;
-  const port = store.mapItems.find(p => p.type === 'port');
+  const port = store.mapItems.find((p) => p.type === 'port');
   store.properties.set(port.id, { portId: port.id, ownerId: human.id, level: 0, isMortgaged: false });
   human.ports.push(port.id);
 
@@ -145,7 +163,7 @@ console.log('场景5: 落在抵押中的港口');
   const store = newGame();
   const human = store.humanPlayer;
   const ai = store.aiPlayers[0];
-  const port = store.mapItems.find(p => p.type === 'port');
+  const port = store.mapItems.find((p) => p.type === 'port');
   store.properties.set(port.id, { portId: port.id, ownerId: ai.id, level: 0, isMortgaged: true });
 
   placeBefore(store, human, port.index);
@@ -160,7 +178,7 @@ console.log('场景6: 升级港口按档位收费');
   const store = newGame();
   const human = store.humanPlayer;
   const ai = store.aiPlayers[0];
-  const port = store.mapItems.find(p => p.type === 'port');
+  const port = store.mapItems.find((p) => p.type === 'port');
   store.properties.set(port.id, { portId: port.id, ownerId: ai.id, level: 0, isMortgaged: false });
   ai.ports.push(port.id);
   store.properties.get(port.id).level = 2; // 升级到 2 级

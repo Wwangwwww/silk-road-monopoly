@@ -23,12 +23,13 @@ defineProps<{ title?: string }>();
   justify-content: space-between;
   height: 48px;
   padding: 0 20px;
-  background: linear-gradient(135deg, #00838F, #00ACC1);
+  background: linear-gradient(135deg, #00838f, #00acc1);
   color: #fff;
   font-size: 16px;
   font-weight: 500;
 }
-.sr-title-bar__left, .sr-title-bar__right {
+.sr-title-bar__left,
+.sr-title-bar__right {
   flex: 0 0 auto;
 }
 .sr-title-bar__center {

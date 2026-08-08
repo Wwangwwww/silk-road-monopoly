@@ -1,13 +1,13 @@
 {
-	"compilerOptions": {
-		"target": "ES2022",
-		"module": "ESNext",
-		"moduleResolution": "Bundler",
-		"strict": true,
-		"jsx": "preserve",
-		"esModuleInterop": true,
-		"skipLibCheck": true,
-		"paths": { "@src/*": ["./src/*"] }
-	},
-	"include": ["src/**/*", "types/**/*"]
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "jsx": "preserve",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "paths": { "@src/*": ["./src/*"] }
+  },
+  "include": ["src/**/*", "types/**/*"]
 }

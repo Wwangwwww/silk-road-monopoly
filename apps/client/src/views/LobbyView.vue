@@ -2,9 +2,7 @@
   <div class="lobby-view">
     <SRTitleBar title="🏯 港口大厅" />
     <div class="lobby-view__content">
-      <p style="text-align: center; padding: 40px; color: #546E7A;">
-        房间列表加载中...
-      </p>
+      <p style="text-align: center; padding: 40px; color: #546e7a">房间列表加载中...</p>
     </div>
   </div>
 </template>

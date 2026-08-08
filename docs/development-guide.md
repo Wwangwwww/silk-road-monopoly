@@ -2,19 +2,19 @@
 
 ## 技术栈
 
-| 层级 | 技术 |
-|------|------|
-| 前端框架 | Vue 3.5 + TypeScript |
-| 状态管理 | Pinia |
-| UI 组件库 | Ant Design Vue 4 |
-| 3D 渲染 | Three.js 0.179 |
-| 2D 渲染 | Pixi.js 8.14 |
-| 桌面端 | Electron 37 |
-| 移动端 | Capacitor 8 |
-| 服务端 | Express 4 + TypeScript |
-| 数据库 | MySQL 8 + TypeORM |
-| 实时通信 | WebSocket (ws) + WebRTC (PeerJS) |
-| 构建工具 | Vite 5 + pnpm |
+| 层级      | 技术                             |
+| --------- | -------------------------------- |
+| 前端框架  | Vue 3.5 + TypeScript             |
+| 状态管理  | Pinia                            |
+| UI 组件库 | Ant Design Vue 4                 |
+| 3D 渲染   | Three.js 0.179                   |
+| 2D 渲染   | Pixi.js 8.14                     |
+| 桌面端    | Electron 37                      |
+| 移动端    | Capacitor 8                      |
+| 服务端    | Express 4 + TypeScript           |
+| 数据库    | MySQL 8 + TypeORM                |
+| 实时通信  | WebSocket (ws) + WebRTC (PeerJS) |
+| 构建工具  | Vite 5 + pnpm                    |
 
 ## 项目结构
 
@@ -50,12 +50,15 @@ silk-road-monopoly/
 ## 快速开发
 
 ### 1. 安装依赖
+
 ```bash
 pnpm install
 ```
 
 ### 2. 配置环境变量
+
 复制 `.env.example` 为 `.env` 并配置：
+
 ```env
 SERVER_PORT=8081
 ICE_SERVER_PORT=8082
@@ -67,6 +70,7 @@ MYSQL_PASSWORD=your_password
 ```
 
 ### 3. 启动开发服务
+
 ```bash
 # 终端 1: 启动服务端
 pnpm dev-server
@@ -79,6 +83,7 @@ pnpm dev-admin
 ```
 
 ### 4. 访问
+
 - 客户端: http://localhost:5173
 - 管理面板: http://localhost:5174
 - API 服务: http://localhost:8081
@@ -87,15 +92,15 @@ pnpm dev-admin
 
 ### 核心概念
 
-| 概念 | 实现 |
-|------|------|
-| 货币 | 银两 (Silver) |
-| 棋盘 | 海上丝绸之路航线 |
-| 地产 | 历史港口/商埠 |
-| 建筑 | 商埠→商馆→贸易中心 |
+| 概念   | 实现                   |
+| ------ | ---------------------- |
+| 货币   | 银两 (Silver)          |
+| 棋盘   | 海上丝绸之路航线       |
+| 地产   | 历史港口/商埠          |
+| 建筑   | 商埠→商馆→贸易中心     |
 | 机会卡 | 航海事件 (台风/海盗等) |
 | 命运卡 | 贸易事件 (繁荣/萧条等) |
-| 角色 | 历史人物/不同船型 |
+| 角色   | 历史人物/不同船型      |
 
 ### 地图文件格式
 

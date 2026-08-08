@@ -9,15 +9,19 @@
   </div>
 </template>
 
-<script setup lang="ts">
-</script>
+<script setup lang="ts"></script>
 
 <style scoped>
-.admin-app { min-height: 100vh; background: #F0F7F8; }
+.admin-app {
+  min-height: 100vh;
+  background: #f0f7f8;
+}
 .admin-header {
-  background: linear-gradient(135deg, #00838F, #006064);
+  background: linear-gradient(135deg, #00838f, #006064);
   color: #fff;
   padding: 16px 24px;
 }
-.admin-main { padding: 24px; }
+.admin-main {
+  padding: 24px;
+}
 </style>

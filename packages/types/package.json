@@ -1,14 +1,14 @@
 {
-	"name": "@silk-road-monopoly/types",
-	"version": "1.0.0",
-	"description": "Shared type definitions for Silk Road Monopoly",
-	"main": "index.ts",
-	"type": "module",
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
-	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
-	"packageManager": "pnpm@10.10.0"
+  "name": "@silk-road-monopoly/types",
+  "version": "1.0.0",
+  "description": "Shared type definitions for Silk Road Monopoly",
+  "main": "index.ts",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.10.0"
 }

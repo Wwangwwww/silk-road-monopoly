@@ -1,20 +1,20 @@
 {
-	"compilerOptions": {
-		"target": "ES2022",
-		"module": "ESNext",
-		"moduleResolution": "Bundler",
-		"strict": true,
-		"jsx": "preserve",
-		"esModuleInterop": true,
-		"skipLibCheck": true,
-		"paths": {
-			"@src/*": ["./src/*"],
-			"@silk-road-monopoly/types": ["../../packages/types/index.ts"],
-			"@silk-road-monopoly/env": ["../../packages/env/src/browser.ts"],
-			"@silk-road-monopoly/utils": ["../../packages/utils/src/index.ts"]
-		},
-		"types": ["node", "vite/client"]
-	},
-	"include": ["src/**/*"],
-	"references": [{ "path": "./tsconfig.node.json" }]
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "jsx": "preserve",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "paths": {
+      "@src/*": ["./src/*"],
+      "@silk-road-monopoly/types": ["../../packages/types/index.ts"],
+      "@silk-road-monopoly/env": ["../../packages/env/src/browser.ts"],
+      "@silk-road-monopoly/utils": ["../../packages/utils/src/index.ts"]
+    },
+    "types": ["node", "vite/client"]
+  },
+  "include": ["src/**/*"],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }

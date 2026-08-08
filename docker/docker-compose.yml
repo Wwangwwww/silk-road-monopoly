@@ -7,13 +7,13 @@ services:
     container_name: silkroad-server
     restart: unless-stopped
     ports:
-      - "${SERVER_PORT:-8081}:${SERVER_PORT:-8081}"
-      - "${ICE_SERVER_PORT:-8082}:${ICE_SERVER_PORT:-8082}"
-      - "${SILKROAD_ADMIN_PORT:-8083}:${SILKROAD_ADMIN_PORT:-8083}"
+      - '${SERVER_PORT:-8081}:${SERVER_PORT:-8081}'
+      - '${ICE_SERVER_PORT:-8082}:${ICE_SERVER_PORT:-8082}'
+      - '${SILKROAD_ADMIN_PORT:-8083}:${SILKROAD_ADMIN_PORT:-8083}'
     env_file:
       - .env
     extra_hosts:
-      - "silkroad-coturn:172.19.0.1"
+      - 'silkroad-coturn:172.19.0.1'
     volumes:
       - server-public:/app/apps/server/public
     networks:
@@ -30,13 +30,13 @@ services:
     env_file:
       - .env
     command:
-      - "-c"
-      - "/etc/coturn/turnserver.conf"
-      - "--external-ip=${EXTERNAL_IP}"
-      - "--static-auth-secret=${TURN_SECRET}"
-      - "--prometheus"
-      - "--prometheus-port=9641"
-      - "--log-file=stdout"
+      - '-c'
+      - '/etc/coturn/turnserver.conf'
+      - '--external-ip=${EXTERNAL_IP}'
+      - '--static-auth-secret=${TURN_SECRET}'
+      - '--prometheus'
+      - '--prometheus-port=9641'
+      - '--log-file=stdout'
 
 networks:
   silkroad-network:

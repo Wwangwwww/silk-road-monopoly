@@ -22,16 +22,13 @@ export function env<T = string>(key: string, defaultValue?: T): T {
   const runtimeVal = typeof __RUNTIME_ENV__ !== 'undefined' ? __RUNTIME_ENV__[upperKey] : undefined;
   const buildVal = typeof __ENV_VARS__ !== 'undefined' ? __ENV_VARS__[upperKey] : undefined;
 
-  const value = (runtimeVal !== undefined && runtimeVal !== '') ? runtimeVal : buildVal;
+  const value = runtimeVal !== undefined && runtimeVal !== '' ? runtimeVal : buildVal;
 
   if (value === undefined || value === '') {
     if (defaultValue !== undefined) {
       return defaultValue;
     }
-    throw new Error(
-      `[@silk-road-monopoly/env] 环境变量 "${key}" 未定义。\n` +
-      `请检查 .env 文件中是否配置了 ${key}。`
-    );
+    throw new Error(`[@silk-road-monopoly/env] 环境变量 "${key}" 未定义。\n` + `请检查 .env 文件中是否配置了 ${key}。`);
   }
 
   if (upperKey.includes('PORT') || upperKey === 'MYSQL_PORT') {

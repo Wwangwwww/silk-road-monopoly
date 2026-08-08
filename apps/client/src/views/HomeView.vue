@@ -7,19 +7,14 @@
         <p class="home-view__subtitle">SILK ROAD MONOPOLY</p>
       </div>
       <div class="home-view__actions">
-        <button class="sr-btn sr-btn--primary" @click="$router.push('/game')">
-          开始游戏
-        </button>
-        <button class="sr-btn sr-btn--secondary">
-          地图编辑
-        </button>
+        <button class="sr-btn sr-btn--primary" @click="$router.push('/game')">开始游戏</button>
+        <button class="sr-btn sr-btn--secondary">地图编辑</button>
       </div>
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
-</script>
+<script setup lang="ts"></script>
 
 <style scoped>
 .home-view {
@@ -33,7 +28,7 @@
 .home-view__bg {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, #0D3B42 0%, #00838F 50%, #00ACC1 100%);
+  background: linear-gradient(135deg, #0d3b42 0%, #00838f 50%, #00acc1 100%);
   opacity: 0.9;
 }
 .home-view__content {
@@ -43,13 +38,13 @@
 }
 .home-view__logo h1 {
   font-size: 48px;
-  color: #FFD700;
-  text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  color: #ffd700;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   margin-bottom: 8px;
 }
 .home-view__subtitle {
   font-size: 18px;
-  color: #E0F7FA;
+  color: #e0f7fa;
   letter-spacing: 8px;
   margin-bottom: 48px;
 }
@@ -69,8 +64,8 @@
   transition: all 0.3s;
 }
 .sr-btn--primary {
-  background: linear-gradient(135deg, #FFD700, #E8B84B);
-  color: #5D4037;
+  background: linear-gradient(135deg, #ffd700, #e8b84b);
+  color: #5d4037;
   font-weight: 700;
   box-shadow: 0 4px 20px rgba(255, 215, 0, 0.4);
 }
@@ -79,12 +74,12 @@
   box-shadow: 0 6px 24px rgba(255, 215, 0, 0.5);
 }
 .sr-btn--secondary {
-  background: rgba(255,255,255,0.15);
+  background: rgba(255, 255, 255, 0.15);
   color: #fff;
-  border: 1px solid rgba(255,255,255,0.3);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(10px);
 }
 .sr-btn--secondary:hover {
-  background: rgba(255,255,255,0.25);
+  background: rgba(255, 255, 255, 0.25);
 }
 </style>

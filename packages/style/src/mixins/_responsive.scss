@@ -2,20 +2,32 @@
 
 @mixin sr-respond-to($breakpoint) {
   @if $breakpoint == sm {
-    @media (min-width: $sr-breakpoint-sm) { @content; }
+    @media (min-width: $sr-breakpoint-sm) {
+      @content;
+    }
   } @else if $breakpoint == md {
-    @media (min-width: $sr-breakpoint-md) { @content; }
+    @media (min-width: $sr-breakpoint-md) {
+      @content;
+    }
   } @else if $breakpoint == lg {
-    @media (min-width: $sr-breakpoint-lg) { @content; }
+    @media (min-width: $sr-breakpoint-lg) {
+      @content;
+    }
   } @else if $breakpoint == xl {
-    @media (min-width: $sr-breakpoint-xl) { @content; }
+    @media (min-width: $sr-breakpoint-xl) {
+      @content;
+    }
   }
 }
 
 @mixin sr-respond-to-game($breakpoint) {
   @if $breakpoint == sm {
-    @media (min-width: $sr-breakpoint-game-sm) { @content; }
+    @media (min-width: $sr-breakpoint-game-sm) {
+      @content;
+    }
   } @else if $breakpoint == md {
-    @media (min-width: $sr-breakpoint-game-md) { @content; }
+    @media (min-width: $sr-breakpoint-game-md) {
+      @content;
+    }
   }
 }
