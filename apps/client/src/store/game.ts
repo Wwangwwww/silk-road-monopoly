@@ -482,6 +482,30 @@ export const useGameStore = defineStore('game', () => {
     settleLanding(player);
   }
 
+  // ---------- 事件效果详情（供 UI 弹窗展示） ----------
+  function getEventEffectSummary(card: ChanceCard): string[] {
+    switch (card.effect) {
+      case MapEventType.Typhoon:
+        return [`💸 损失 ${card.value} 银两`, '🚢 船队等级 -1（船队等级大于 1 时）'];
+      case MapEventType.Pirates:
+        return [`💸 损失 ${card.value} 银两`];
+      case MapEventType.FairWind:
+        return [`⛵ 向前航行 ${card.value} 格`, '经过起点·泉州照常领取 2000 两奖励'];
+      case MapEventType.TradeBoom:
+        return [`💰 获得 ${card.value} 银两`];
+      case MapEventType.Mirage:
+        return ['🧭 随机传送到一座港口', '若落在他人港口需照常支付过路费'];
+      case MapEventType.ImperialReward:
+        return [`💰 获得 ${card.value} 银两`];
+      case MapEventType.ShipRepair:
+        return [`💸 支付 ${card.value} 银两`];
+      case MapEventType.CustomsDuty:
+        return [`💸 缴纳当前银两的 ${Math.round(card.value * 100)}% 作为关税`];
+      default:
+        return [];
+    }
+  }
+
   // ---------- 港口操作 ----------
   function buyPort(portId: string) {
     const player = currentPlayer.value;
@@ -684,8 +708,8 @@ export const useGameStore = defineStore('game', () => {
         break;
       }
       case GamePhaseMark.Event: {
-        // 事件已在 settleLanding 中完成抽卡与效果应用，此处只需短暂停顿让玩家看清卡片
-        await new Promise((r) => setTimeout(r, 400));
+        // 事件已在 settleLanding 中完成抽卡与效果应用，此处停顿让玩家看清 AI 触发的事件卡片
+        await new Promise((r) => setTimeout(r, 1200));
         break;
       }
       // tax / go_to_jail / jail / free_port / start_port 已在 movePlayer 中处理
@@ -839,5 +863,6 @@ export const useGameStore = defineStore('game', () => {
     notifyMoveFinished,
     waitForMove,
     resetGame,
+    getEventEffectSummary,
   };
 });

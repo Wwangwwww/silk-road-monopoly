@@ -110,17 +110,9 @@
             <button class="sr-btn sr-btn--secondary" @click="store.endTurn">⏭ 跳过</button>
           </template>
 
-          <!-- 事件阶段 -->
+          <!-- 事件阶段（详情由屏幕中央弹窗展示） -->
           <template v-if="store.phase === 'event' && store.currentPlayer && !store.currentPlayer.isAI">
-            <div class="event-card-wrap">
-              <SRChanceCard
-                v-if="store.currentEvent"
-                :title="store.currentEvent.title"
-                :description="store.currentEvent.description"
-                :type="store.currentEvent.type"
-              />
-              <p v-else style="color: #546e7a">📜 航海事件...</p>
-            </div>
+            <p style="color: #546e7a">📜 航海事件触发，请看屏幕中央…</p>
             <button class="sr-btn sr-btn--primary" @click="store.endTurn">⏭ 继续</button>
           </template>
 
@@ -163,6 +155,33 @@
         </div>
       </div>
     </template>
+
+    <!-- 航海事件弹窗：屏幕中央展示触发的事件及详细说明 -->
+    <transition name="event-modal">
+      <div v-if="showEventModal" class="event-modal" @click.self="dismissEventModal">
+        <div class="event-modal__card">
+          <button class="event-modal__close" @click="dismissEventModal" title="关闭">✕</button>
+          <SRChanceCard
+            v-if="store.currentEvent"
+            :title="store.currentEvent.title"
+            :description="store.currentEvent.description"
+            :type="store.currentEvent.type"
+          />
+          <div class="event-modal__effects">
+            <h4>📋 事件详情</h4>
+            <ul>
+              <li v-for="(e, i) in eventEffectSummary" :key="i">{{ e }}</li>
+            </ul>
+          </div>
+          <div class="event-modal__actions">
+            <button v-if="showEventConfirm" class="sr-btn sr-btn--primary" @click="handleEventConfirm">✅ 确认</button>
+            <button v-else-if="!store.currentPlayer?.isAI" class="sr-btn sr-btn--secondary" @click="dismissEventModal">
+              知道了
+            </button>
+          </div>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -229,6 +248,29 @@ function handleBuyPort() {
 function handleRestart() {
   store.resetGame();
 }
+
+// ===== 航海事件弹窗 =====
+const eventModalVisible = ref(false);
+
+const showEventModal = computed(() => store.currentEvent !== null && eventModalVisible.value);
+const eventEffectSummary = computed(() => (store.currentEvent ? store.getEventEffectSummary(store.currentEvent) : []));
+const showEventConfirm = computed(() => store.phase === 'event' && !!store.currentPlayer && !store.currentPlayer.isAI);
+
+function dismissEventModal() {
+  eventModalVisible.value = false;
+}
+
+function handleEventConfirm() {
+  store.endTurn();
+}
+
+// 事件触发（currentEvent 被设置）时弹出居中弹窗
+watch(
+  () => store.currentEvent,
+  (ev) => {
+    if (ev) eventModalVisible.value = true;
+  }
+);
 </script>
 
 <style scoped>
@@ -496,14 +538,94 @@ function handleRestart() {
   padding: 4px 0;
 }
 
-.event-card-wrap {
+/* ===== 航海事件弹窗 ===== */
+.event-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 20, 24, 0.65);
+  backdrop-filter: blur(3px);
   display: flex;
+  align-items: center;
   justify-content: center;
-  margin-bottom: 8px;
 }
-.event-card-wrap :deep(.sr-chance-card) {
+.event-modal__card {
+  position: relative;
+  background: #f8fbfb;
+  border-radius: 18px;
+  padding: 24px 24px 20px;
+  width: 420px;
+  max-width: 92vw;
+  box-shadow: 0 16px 60px rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+.event-modal__card :deep(.sr-chance-card) {
   width: 100%;
-  max-width: 280px;
+  max-width: 100%;
+}
+.event-modal__close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  border: none;
+  background: none;
+  font-size: 16px;
+  color: #90a4ae;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+}
+.event-modal__close:hover {
+  color: #37474f;
+}
+.event-modal__effects {
+  margin-top: 16px;
+  text-align: left;
+  background: #eef6f7;
+  border-radius: 10px;
+  padding: 12px 16px;
+}
+.event-modal__effects h4 {
+  font-size: 12px;
+  color: #00838f;
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+}
+.event-modal__effects ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.event-modal__effects li {
+  font-size: 14px;
+  color: #37474f;
+  line-height: 1.9;
+}
+.event-modal__effects li + li {
+  border-top: 1px dashed #cfd8dc;
+}
+.event-modal__actions {
+  margin-top: 16px;
+}
+.event-modal__actions .sr-btn {
+  width: 100%;
+}
+/* 弹窗过渡动画 */
+.event-modal-enter-active,
+.event-modal-leave-active {
+  transition: opacity 0.25s ease;
+}
+.event-modal-enter-active .event-modal__card,
+.event-modal-leave-active .event-modal__card {
+  transition: transform 0.25s ease;
+}
+.event-modal-enter-from,
+.event-modal-leave-to {
+  opacity: 0;
+}
+.event-modal-enter-from .event-modal__card,
+.event-modal-leave-to .event-modal__card {
+  transform: scale(0.9) translateY(10px);
 }
 
 .player-row {
