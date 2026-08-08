@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import type { GameData, PlayerInfo, DiceResult, GameLog, PropertyInfo } from '@silk-road-monopoly/types';
-import { GamePhaseMark } from '@silk-road-monopoly/types';
+import type { GameData, PlayerInfo, DiceResult, GameLog, PropertyInfo, ChanceCard } from '@silk-road-monopoly/types';
+import { GamePhaseMark, MapEventType } from '@silk-road-monopoly/types';
 
 // ==================== 默认地图数据（临时内置，后续从地图文件加载） ====================
 
@@ -72,6 +72,132 @@ function createDefaultPorts() {
   return ports;
 }
 
+// ==================== 航海事件卡池 ====================
+
+/** 航海事件卡池（8 种事件类型，对应 types 的 MapEventType 枚举） */
+const EVENT_CARDS: ChanceCard[] = [
+  // 🌪️ 台风：损失银两，船队可能降级
+  {
+    id: 'ev_typhoon_1',
+    title: '🌪️ 台风突袭',
+    description: '狂风骤雨撕破船帆，损失 500 银两，船队降 1 级。',
+    type: 'chance',
+    effect: MapEventType.Typhoon,
+    value: 500,
+  },
+  {
+    id: 'ev_typhoon_2',
+    title: '🌪️ 风暴过境',
+    description: '海浪吞没部分货物，损失 300 银两。',
+    type: 'chance',
+    effect: MapEventType.Typhoon,
+    value: 300,
+  },
+  // 🏴‍☠️ 海盗：损失银两
+  {
+    id: 'ev_pirates_1',
+    title: '🏴‍☠️ 遭遇海盗',
+    description: '海盗登船劫掠，损失 400 银两！',
+    type: 'chance',
+    effect: MapEventType.Pirates,
+    value: 400,
+  },
+  {
+    id: 'ev_pirates_2',
+    title: '🏴‍☠️ 海盗袭扰',
+    description: '海盗船逼近，紧急避险损失 250 银两。',
+    type: 'chance',
+    effect: MapEventType.Pirates,
+    value: 250,
+  },
+  // 🌬️ 顺风：额外前进
+  {
+    id: 'ev_fairwind_1',
+    title: '🌬️ 顺风而行',
+    description: '季风助航，帆船向前航行 3 格！',
+    type: 'chance',
+    effect: MapEventType.FairWind,
+    value: 3,
+  },
+  {
+    id: 'ev_fairwind_2',
+    title: '🌬️ 顺风顺水',
+    description: '东风吹送，向前航行 2 格。',
+    type: 'chance',
+    effect: MapEventType.FairWind,
+    value: 2,
+  },
+  // 📈 贸易繁荣：获得银两
+  {
+    id: 'ev_tradeboom_1',
+    title: '📈 贸易繁荣',
+    description: '沿线港口交易火爆，获利 600 银两！',
+    type: 'fate',
+    effect: MapEventType.TradeBoom,
+    value: 600,
+  },
+  {
+    id: 'ev_tradeboom_2',
+    title: '📈 商机涌现',
+    description: '香料价格暴涨，赚取 400 银两。',
+    type: 'fate',
+    effect: MapEventType.TradeBoom,
+    value: 400,
+  },
+  // ✨ 海市蜃楼：随机传送
+  {
+    id: 'ev_mirage_1',
+    title: '✨ 海市蜃楼',
+    description: '幻象迷航，帆船被风吹向一座随机港口。',
+    type: 'chance',
+    effect: MapEventType.Mirage,
+    value: 0,
+  },
+  // 🏯 朝廷赏赐：获得银两
+  {
+    id: 'ev_imperial_1',
+    title: '🏯 朝廷赏赐',
+    description: '朝贡有功，皇帝赏银 800 两！',
+    type: 'fate',
+    effect: MapEventType.ImperialReward,
+    value: 800,
+  },
+  {
+    id: 'ev_imperial_2',
+    title: '🏯 册封嘉奖',
+    description: '获朝廷嘉奖，得赏银 500 两。',
+    type: 'fate',
+    effect: MapEventType.ImperialReward,
+    value: 500,
+  },
+  // 🔧 船舶维修：支付银两
+  {
+    id: 'ev_shiprepair_1',
+    title: '🔧 船舶维修',
+    description: '船底渗水，维修花费 350 银两。',
+    type: 'fate',
+    effect: MapEventType.ShipRepair,
+    value: 350,
+  },
+  {
+    id: 'ev_shiprepair_2',
+    title: '🔧 更换船帆',
+    description: '船帆破损，更换花费 250 银两。',
+    type: 'fate',
+    effect: MapEventType.ShipRepair,
+    value: 250,
+  },
+  // 🧾 关税：按当前银两的 10% 缴纳
+  {
+    id: 'ev_customs_1',
+    title: '🧾 缴纳关税',
+    description: '过港查验，缴纳当前 10% 银两作为关税。',
+    type: 'fate',
+    effect: MapEventType.CustomsDuty,
+    value: 0.1,
+  },
+];
+
 // ==================== Store 定义 ====================
 
 export const useGameStore = defineStore('game', () => {
@@ -88,9 +214,13 @@ export const useGameStore = defineStore('game', () => {
   const mapItems = ref<any[]>([]);
   const logs = ref<GameLog[]>([]);
   const diceResult = ref<DiceResult | null>(null);
+  const currentEvent = ref<ChanceCard | null>(null);
   const isGameStarted = ref(false);
   const isGameOver = ref(false);
   const winner = ref<PlayerInfo | null>(null);
+
+  // ---------- 事件链保护：事件效果引发的二次移动若再落事件格，不再连环触发 ----------
+  let eventChainDepth = 0;
 
   // ---------- 计算属性 ----------
   const currentPlayer = computed(() => players.value[currentPlayerIndex.value] ?? null);
@@ -147,6 +277,8 @@ export const useGameStore = defineStore('game', () => {
     isGameOver.value = false;
     winner.value = null;
     diceResult.value = null;
+    currentEvent.value = null;
+    eventChainDepth = 0;
     properties.value = new Map();
     logs.value = [];
     mapItems.value = createDefaultPorts();
@@ -198,9 +330,17 @@ export const useGameStore = defineStore('game', () => {
       `${player.name} 从 ${mapItems.value[oldPos]?.name ?? oldPos} 移动到 ${mapItems.value[newPos]?.name ?? newPos}`
     );
 
-    // 进入阶段转换
-    const landedItem = mapItems.value[newPos];
-    if (!landedItem) return;
+    // 进入落点结算
+    settleLanding(player);
+  }
+
+  // ---------- 落点结算（移动/传送共用） ----------
+  function settleLanding(player: PlayerInfo) {
+    const landedItem = mapItems.value[player.position];
+    if (!landedItem) {
+      phase.value = GamePhaseMark.TurnEnd;
+      return;
+    }
 
     // 过路费为强制规则：落脚点若为「有主且非自己」的港口，立即自动扣费，无法通过跳过/继续绕过
     if (landedItem.type === 'port') {
@@ -218,9 +358,25 @@ export const useGameStore = defineStore('game', () => {
         }
         break;
       case 'chance':
-      case 'fate':
-        phase.value = GamePhaseMark.Event;
+      case 'fate': {
+        // 事件链保护：事件效果引发的二次移动若再落到事件格，不再连环触发
+        if (eventChainDepth > 0) {
+          phase.value = GamePhaseMark.TurnEnd;
+        } else {
+          drawEventCard();
+          const card = currentEvent.value;
+          if (!card) {
+            phase.value = GamePhaseMark.TurnEnd;
+            break;
+          }
+          // 移动类事件会由 movePlayer/teleportTo 更新 phase；其余事件停留在 Event 阶段展示卡片
+          const moved = applyEvent(card);
+          if (!moved) {
+            phase.value = GamePhaseMark.Event;
+          }
+        }
         break;
+      }
       case 'tax':
         handleTax();
         break;
@@ -235,6 +391,95 @@ export const useGameStore = defineStore('game', () => {
       default:
         phase.value = GamePhaseMark.TurnEnd;
     }
+  }
+
+  // ---------- 航海事件：抽卡 ----------
+  function drawEventCard() {
+    const player = currentPlayer.value;
+    eventChainDepth++;
+    const pool = EVENT_CARDS;
+    const card = pool[Math.floor(Math.random() * pool.length)];
+    currentEvent.value = card;
+    addLog('event', `🎴 ${player?.name ?? '玩家'} 抽到航海事件卡：${card.title}`);
+  }
+
+  // ---------- 航海事件：应用效果（返回 true 表示效果引发了移动，phase 已由落点结算更新） ----------
+  function applyEvent(card: ChanceCard): boolean {
+    const player = currentPlayer.value;
+    if (!player || player.isBankrupt) return false;
+
+    switch (card.effect) {
+      case MapEventType.Typhoon: {
+        const loss = Math.min(card.value, player.silver);
+        player.silver -= loss;
+        const shipDamaged = player.fleetLevel > 1;
+        if (shipDamaged) player.fleetLevel -= 1;
+        addLog(
+          'event',
+          `🌪️ ${player.name} 遭遇台风，损失 ${loss} 银两${shipDamaged ? `，船队受损降为 ${player.fleetLevel} 级` : ''}！`
+        );
+        return false;
+      }
+      case MapEventType.Pirates: {
+        const loss = Math.min(card.value, player.silver);
+        player.silver -= loss;
+        addLog('event', `🏴‍☠️ ${player.name} 遭遇海盗，损失 ${loss} 银两！`);
+        return false;
+      }
+      case MapEventType.FairWind: {
+        addLog('event', `🌬️ ${player.name} 遇到顺风，向前航行 ${card.value} 格！`);
+        movePlayer(card.value);
+        return true;
+      }
+      case MapEventType.TradeBoom: {
+        player.silver += card.value;
+        addLog('event', `📈 ${player.name} 赶上贸易繁荣，获利 ${card.value} 银两！`);
+        return false;
+      }
+      case MapEventType.Mirage: {
+        const portItems = mapItems.value.filter((m: any) => m.type === 'port' || m.type === 'start_port');
+        if (portItems.length > 0) {
+          const target = portItems[Math.floor(Math.random() * portItems.length)];
+          addLog('event', `✨ ${player.name} 被海市蜃楼迷惑，飘向 ${target.name}！`);
+          teleportTo(target.index, player);
+          return true;
+        }
+        addLog('event', `✨ ${player.name} 看到海市蜃楼，但船队稳住了方向。`);
+        return false;
+      }
+      case MapEventType.ImperialReward: {
+        player.silver += card.value;
+        addLog('event', `🏯 ${player.name} 获朝廷赏赐 ${card.value} 银两！`);
+        return false;
+      }
+      case MapEventType.ShipRepair: {
+        const loss = Math.min(card.value, player.silver);
+        player.silver -= loss;
+        addLog('event', `🔧 ${player.name} 支付 ${loss} 银两维修船只！`);
+        return false;
+      }
+      case MapEventType.CustomsDuty: {
+        const duty = Math.floor(player.silver * card.value);
+        const loss = Math.min(duty, player.silver);
+        player.silver -= loss;
+        addLog('event', `🧾 ${player.name} 缴纳关税 ${loss} 银两！`);
+        return false;
+      }
+      default:
+        addLog('event', `${player.name} 海上风平浪静，无事发生。`);
+        return false;
+    }
+  }
+
+  // ---------- 传送（海市蜃楼效果使用，直接到达目标格子并结算） ----------
+  function teleportTo(targetIndex: number, player: PlayerInfo) {
+    const oldPos = player.position;
+    player.position = targetIndex;
+    addLog(
+      'move',
+      `${player.name} 从 ${mapItems.value[oldPos]?.name ?? oldPos} 来到 ${mapItems.value[targetIndex]?.name ?? targetIndex}`
+    );
+    settleLanding(player);
   }
 
   // ---------- 港口操作 ----------
@@ -356,6 +601,10 @@ export const useGameStore = defineStore('game', () => {
     const player = currentPlayer.value;
     if (!player) return;
 
+    // 重置事件展示与事件链保护
+    currentEvent.value = null;
+    eventChainDepth = 0;
+
     // 检查破产
     if (player.silver <= 0 && !player.isBankrupt) {
       player.isBankrupt = true;
@@ -430,12 +679,13 @@ export const useGameStore = defineStore('game', () => {
     switch (phase.value) {
       case GamePhaseMark.PortAction: {
         await new Promise((r) => setTimeout(r, 400));
-        handleAIPortAction(player, landedItem);
+        // 事件移动后可能落在新的港口，取当前位置进行购买决策
+        handleAIPortAction(player, mapItems.value[player.position] ?? landedItem);
         break;
       }
       case GamePhaseMark.Event: {
+        // 事件已在 settleLanding 中完成抽卡与效果应用，此处只需短暂停顿让玩家看清卡片
         await new Promise((r) => setTimeout(r, 400));
-        handleAIEvent(player);
         break;
       }
       // tax / go_to_jail / jail / free_port / start_port 已在 movePlayer 中处理
@@ -485,24 +735,7 @@ export const useGameStore = defineStore('game', () => {
     // （暂不实现，未来可扩展）
   }
 
-  // --- AI 事件处理 ---
-  function handleAIEvent(player: PlayerInfo) {
-    // 随机事件效果（简化版）
-    const eventRoll = Math.random();
-    if (eventRoll < 0.3) {
-      // 顺风：获得奖励
-      const bonus = 200 + Math.floor(Math.random() * 300);
-      player.silver += bonus;
-      addLog('event', `${player.name} 遇到顺风，获得 ${bonus} 银两！`);
-    } else if (eventRoll < 0.6) {
-      // 海盗：损失银两
-      const loss = Math.min(200 + Math.floor(Math.random() * 300), player.silver);
-      player.silver -= loss;
-      addLog('event', `🏴‍☠️ ${player.name} 遭遇海盗，损失 ${loss} 银两！`);
-    } else {
-      addLog('event', `${player.name} 海上风平浪静，无事发生。`);
-    }
-  }
+  // --- AI 事件处理：已由统一航海事件系统（drawEventCard + applyEvent）接管，AI 与人类共用同一套规则 ---
 
   // --- AI 人格系统 ---
   interface AIPersonality {
@@ -567,6 +800,8 @@ export const useGameStore = defineStore('game', () => {
     mapItems.value = [];
     logs.value = [];
     diceResult.value = null;
+    currentEvent.value = null;
+    eventChainDepth = 0;
     isGameStarted.value = false;
     isGameOver.value = false;
     winner.value = null;
@@ -582,6 +817,7 @@ export const useGameStore = defineStore('game', () => {
     mapItems,
     logs,
     diceResult,
+    currentEvent,
     isGameStarted,
     isGameOver,
     winner,

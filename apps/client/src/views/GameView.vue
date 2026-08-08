@@ -112,7 +112,15 @@
 
           <!-- 事件阶段 -->
           <template v-if="store.phase === 'event' && store.currentPlayer && !store.currentPlayer.isAI">
-            <p style="color: #546e7a">📜 航海事件...</p>
+            <div class="event-card-wrap">
+              <SRChanceCard
+                v-if="store.currentEvent"
+                :title="store.currentEvent.title"
+                :description="store.currentEvent.description"
+                :type="store.currentEvent.type"
+              />
+              <p v-else style="color: #546e7a">📜 航海事件...</p>
+            </div>
             <button class="sr-btn sr-btn--primary" @click="store.endTurn">⏭ 继续</button>
           </template>
 
@@ -162,6 +170,7 @@
 import { ref, computed, watch } from 'vue';
 import { useGameStore } from '../store/game';
 import GameBoard from '../components/GameBoard.vue';
+import { SRChanceCard } from '@silk-road-monopoly/ui';
 
 const store = useGameStore();
 
@@ -485,6 +494,16 @@ function handleRestart() {
   color: #546e7a;
   text-align: center;
   padding: 4px 0;
+}
+
+.event-card-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+.event-card-wrap :deep(.sr-chance-card) {
+  width: 100%;
+  max-width: 280px;
 }
 
 .player-row {

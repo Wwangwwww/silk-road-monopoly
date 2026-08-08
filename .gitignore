@@ -24,6 +24,7 @@ pnpm-debug.log*
 coverage/
 # 测试脚本生成的临时 bundle
 apps/client/scripts/__toll_test_bundle__.mjs
+apps/client/scripts/__events_test_bundle__.mjs
 
 # ==================== 编辑器 / 系统文件 ====================
 .vscode/*
