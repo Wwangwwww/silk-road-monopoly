@@ -1,0 +1,46 @@
+services:
+  silkroad-server:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: silkroad-server
+    container_name: silkroad-server
+    restart: unless-stopped
+    ports:
+      - "${SERVER_PORT:-8081}:${SERVER_PORT:-8081}"
+      - "${ICE_SERVER_PORT:-8082}:${ICE_SERVER_PORT:-8082}"
+      - "${SILKROAD_ADMIN_PORT:-8083}:${SILKROAD_ADMIN_PORT:-8083}"
+    env_file:
+      - .env
+    extra_hosts:
+      - "silkroad-coturn:172.19.0.1"
+    volumes:
+      - server-public:/app/apps/server/public
+    networks:
+      - silkroad-network
+
+  coturn:
+    image: coturn/coturn:debian
+    container_name: silkroad-coturn
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - ./coturn/turnserver.conf:/etc/coturn/turnserver.conf:ro
+      - ${COTURN_CERTS_PATH:-./coturn/certs}:/etc/coturn/certs:ro
+    env_file:
+      - .env
+    command:
+      - "-c"
+      - "/etc/coturn/turnserver.conf"
+      - "--external-ip=${EXTERNAL_IP}"
+      - "--static-auth-secret=${TURN_SECRET}"
+      - "--prometheus"
+      - "--prometheus-port=9641"
+      - "--log-file=stdout"
+
+networks:
+  silkroad-network:
+    external: true
+
+volumes:
+  server-public:

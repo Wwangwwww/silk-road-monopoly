@@ -1,0 +1,21 @@
+# 统一换行符，避免 Windows/Mac/Linux 之间的行尾差异导致无意义冲突
+* text=auto
+
+# 明确指定为 LF 的文件
+*.sh text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+.gitignore text eol=lf
+.prettierrc.json text eol=lf
+.prettierignore text eol=lf
+
+# 二进制文件不要做文本转换
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.ttf binary
+*.woff binary
+*.woff2 binary
+*.srmap binary

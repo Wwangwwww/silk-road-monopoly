@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    name: 类型检查 + 构建验证
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 代码
+        uses: actions/checkout@v4
+
+      - name: 安装 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: 安装 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: 安装依赖（lockfile 必须一致）
+        run: pnpm install --frozen-lockfile
+
+      - name: 类型检查（client + map-editor）
+        run: pnpm check-all
+
+      - name: 构建客户端 (Web)
+        run: pnpm --filter @silk-road-monopoly/client run build:web
+
+      - name: 构建服务端
+        run: pnpm --filter @silk-road-monopoly/server run build
+
+      - name: 构建管理面板
+        run: pnpm --filter @silk-road-monopoly/admin run build
+
+      - name: 代码风格检查
+        run: pnpm format:check

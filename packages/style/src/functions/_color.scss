@@ -1,0 +1,13 @@
+// ---- 颜色函数 ----
+
+@function sr-lighten($color, $amount) {
+  @return lighten($color, $amount);
+}
+
+@function sr-darken($color, $amount) {
+  @return darken($color, $amount);
+}
+
+@function sr-alpha($color, $opacity) {
+  @return rgba($color, $opacity);
+}

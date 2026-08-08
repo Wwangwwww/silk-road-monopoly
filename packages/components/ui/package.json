@@ -1,0 +1,16 @@
+{
+  "name": "@silk-road-monopoly/ui",
+  "version": "1.0.0",
+  "description": "Silk Road Monopoly shared UI components",
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "peerDependencies": {
+    "vue": "^3.5.0"
+  }
+}

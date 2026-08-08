@@ -1,0 +1,71 @@
+// 海上丝绸之路大富翁 - 样式入口
+@import 'variables/colors';
+@import 'variables/typography';
+@import 'variables/spacing';
+@import 'variables/breakpoints';
+@import 'variables/layers';
+@import 'variables/shadows';
+@import 'variables/textures';
+@import 'mixins/responsive';
+@import 'mixins/theme';
+@import 'functions/color';
+
+// 全局基础样式
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  font-family: $sr-font-family;
+  font-size: $sr-font-size-base;
+  color: $sr-color-text-primary;
+  background-color: $sr-color-bg-primary;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// ==================== 按钮系统 ====================
+.sr-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+
+  &:hover { transform: translateY(-1px); }
+  &:active { transform: translateY(0); }
+
+  &--primary {
+    background: linear-gradient(135deg, #00838F, #00ACC1);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(0, 131, 143, 0.35);
+    &:hover { box-shadow: 0 6px 20px rgba(0, 131, 143, 0.45); }
+  }
+
+  &--secondary {
+    background: #E0F2F1;
+    color: #00695C;
+    &:hover { background: #B2DFDB; }
+  }
+
+  &--danger {
+    background: #EF5350;
+    color: #fff;
+    &:hover { background: #E53935; }
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+}

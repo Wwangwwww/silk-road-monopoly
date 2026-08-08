@@ -1,0 +1,72 @@
+// ==================== Silk Road Monopoly 品牌色系统 ====================
+// 主题: 海上丝绸之路 - 海洋蓝/青色系
+
+// ---- 品牌主色 ----
+$sr-color-primary: #00838F;          // 深海青 (品牌主色)
+$sr-color-primary-light: #00ACC1;    // 浅海青
+$sr-color-primary-dark: #006064;     // 深海暗青
+$sr-color-primary-bg: #E0F7FA;       // 品牌色浅背景
+
+// ---- 辅助色 ----
+$sr-color-secondary: #E8B84B;        // 金沙色 (丝绸/金币)
+$sr-color-secondary-light: #F4D03F;  // 亮金色
+$sr-color-secondary-dark: #C9A030;   // 暗金色
+
+// ---- 语义色 ----
+$sr-color-success: #2E7D32;          // 成功绿
+$sr-color-warning: #F57C00;          // 警告橙
+$sr-color-error: #C62828;            // 错误红
+$sr-color-info: #1565C0;             // 信息蓝
+
+// ---- 中性色 ----
+$sr-color-white: #FFFFFF;
+$sr-color-gray-50: #FAFAFA;
+$sr-color-gray-100: #F5F5F5;
+$sr-color-gray-200: #EEEEEE;
+$sr-color-gray-300: #E0E0E0;
+$sr-color-gray-400: #BDBDBD;
+$sr-color-gray-500: #9E9E9E;
+$sr-color-gray-600: #757575;
+$sr-color-gray-700: #616161;
+$sr-color-gray-800: #424242;
+$sr-color-gray-900: #212121;
+$sr-color-black: #000000;
+
+// ---- 主题背景色 ----
+$sr-color-bg-primary: #F0F7F8;       // 浅海色背景
+$sr-color-bg-secondary: #FFFFFF;
+$sr-color-bg-dark: #0D3B42;          // 深海暗色背景
+$sr-color-bg-card: #FFFFFF;
+$sr-color-bg-overlay: rgba(0, 56, 68, 0.6);  // 遮罩
+
+// ---- 边框色 ----
+$sr-color-border: #B2DFDB;
+$sr-color-border-light: #E0F2F1;
+$sr-color-border-dark: #4DB6AC;
+
+// ---- 文字色 ----
+$sr-color-text-primary: #1A3A40;     // 深海墨色主文字
+$sr-color-text-secondary: #546E7A;   // 次要文字
+$sr-color-text-disabled: #90A4AE;    // 禁用文字
+$sr-color-text-inverse: #FFFFFF;     // 反色文字
+
+// ---- 游戏专用色 ----
+$sr-color-ocean: #0288D1;            // 海洋蓝
+$sr-color-ship: #5D4037;             // 船体棕
+$sr-color-sail: #FFF8E1;             // 帆布白
+$sr-color-treasure: #FFD700;         // 宝藏金
+$sr-color-port: #A1887F;             // 港口灰棕
+$sr-color-spice: #E65100;            // 香料橙
+$sr-color-silk: #E91E63;             // 丝绸粉
+$sr-color-porcelain: #4FC3F7;        // 瓷器蓝
+$sr-color-tea: #8D6E63;              // 茶叶棕
+
+// ---- 玩家颜色 ----
+$sr-player-colors: (
+  1: #E53935,  // 红
+  2: #1E88E5,  // 蓝
+  3: #43A047,  // 绿
+  4: #FB8C00,  // 橙
+  5: #8E24AA,  // 紫
+  6: #00ACC1,  // 青
+);

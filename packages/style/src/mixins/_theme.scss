@@ -1,0 +1,13 @@
+// ---- 主题 Mixins ----
+
+@mixin sr-theme-light {
+  --sr-bg-primary: #{$sr-color-bg-primary};
+  --sr-bg-card: #{$sr-color-bg-card};
+  --sr-text-primary: #{$sr-color-text-primary};
+}
+
+@mixin sr-theme-dark {
+  --sr-bg-primary: #{$sr-color-bg-dark};
+  --sr-bg-card: #{darken($sr-color-bg-dark, 3%)};
+  --sr-text-primary: #{$sr-color-text-inverse};
+}
