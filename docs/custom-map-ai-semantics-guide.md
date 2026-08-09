@@ -14,6 +14,33 @@
 - `tollFees`: 各等级过路费数组
 - `specialty`: 港口特产 (如: 丝绸、瓷器、茶叶)
 
+### 港口文化主题 `theme`（决定棋盘上的特色建筑风格）
+
+| theme            | 地区     | 示例建筑风格       |
+| ---------------- | -------- | ------------------ |
+| `chinese`        | 中国东南 | 中式宝塔、光塔     |
+| `southeast_asia` | 东南亚   | 占婆塔、马来清真寺 |
+| `india`          | 印度     | 佛塔、宫殿穹顶     |
+| `arabia`         | 阿拉伯   | 宣礼塔             |
+| `red_sea`        | 红海     | 火山灯塔           |
+| `mediterranean`  | 地中海   | 法罗斯灯塔         |
+| `europe`         | 欧洲     | 欧式钟楼           |
+
+### 特色地标 `landmark`（沿丝绸之路的代表性建筑）
+
+| landmark             | 对应港口 |
+| -------------------- | -------- |
+| `chinese_pagoda`     | 泉州     |
+| `chinese_minaret`    | 广州     |
+| `cham_tower`         | 占城     |
+| `malay_mosque`       | 满剌加   |
+| `stupa`              | 锡兰     |
+| `palace_dome`        | 古里     |
+| `arabian_minaret`    | 忽鲁谟斯 |
+| `volcano_lighthouse` | 亚丁     |
+| `pharos`             | 亚历山大 |
+| `campanile`          | 威尼斯   |
+
 ### 推荐港口配置
 
 | 港口       | 地区     | 基础价格 | 特产 |

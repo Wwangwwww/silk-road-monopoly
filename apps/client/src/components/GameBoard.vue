@@ -56,6 +56,10 @@ function toCellData(cells: any[]) {
     colorGroup: c.colorGroup,
     region: c.region,
     basePrice: c.basePrice,
+    theme: c.theme,
+    landmark: c.landmark,
+    specialty: c.specialty,
+    description: c.description,
   }));
 }
 
@@ -259,5 +263,15 @@ watch(
   font-size: 8px;
   color: #ffd54f;
   margin-top: 1px;
+}
+.sr-compass-label {
+  color: #ffe9a8;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: serif;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  user-select: none;
 }
 </style>

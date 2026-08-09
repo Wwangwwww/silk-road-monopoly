@@ -68,6 +68,52 @@ export enum PortLevel {
   MaritimeEmpire = 5,
 }
 
+/** 港口地区文化主题（决定棋盘上的特色建筑风格） */
+export enum PortTheme {
+  /** 中国东南沿海 */
+  Chinese = 'chinese',
+  /** 东南亚 */
+  SoutheastAsia = 'southeast_asia',
+  /** 印度 / 南亚 */
+  India = 'india',
+  /** 阿拉伯半岛 */
+  Arabia = 'arabia',
+  /** 红海 */
+  RedSea = 'red_sea',
+  /** 地中海 */
+  Mediterranean = 'mediterranean',
+  /** 欧洲 */
+  Europe = 'europe',
+  /** 公海 / 海洋 */
+  Ocean = 'ocean',
+}
+
+/** 特色地标建筑类型（海上丝绸之路沿线代表性建筑） */
+export enum LandmarkType {
+  /** 中式宝塔（泉州开元寺东西塔） */
+  ChinesePagoda = 'chinese_pagoda',
+  /** 中式光塔（广州怀圣寺光塔） */
+  ChineseMinaret = 'chinese_minaret',
+  /** 东南亚占婆塔（占城） */
+  ChamTower = 'cham_tower',
+  /** 东南亚清真寺（满剌加） */
+  MalayMosque = 'malay_mosque',
+  /** 印度佛塔（锡兰佛牙寺） */
+  Stupa = 'stupa',
+  /** 印度宫殿穹顶（古里卡利卡特） */
+  PalaceDome = 'palace_dome',
+  /** 阿拉伯宣礼塔（忽鲁谟斯） */
+  ArabianMinaret = 'arabian_minaret',
+  /** 红海火山灯塔（亚丁） */
+  VolcanoLighthouse = 'volcano_lighthouse',
+  /** 地中海法罗斯灯塔（亚历山大） */
+  Pharos = 'pharos',
+  /** 欧洲钟楼（威尼斯圣马可钟楼） */
+  Campanile = 'campanile',
+  /** 通用商馆（默认） */
+  TradingHouse = 'trading_house',
+}
+
 /** 地图角色 (历史人物/船型) */
 export interface Role {
   id: string;
@@ -105,6 +151,10 @@ export interface Port {
   upgradeCosts?: number[];
   /** 港口所属颜色组 */
   colorGroup?: string;
+  /** 地区文化主题（决定棋盘上的特色建筑风格） */
+  theme?: PortTheme;
+  /** 特色地标建筑类型 */
+  landmark?: LandmarkType;
   /** 港口描述 */
   description?: string;
   /** 港口特产 */

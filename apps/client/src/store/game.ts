@@ -1,71 +1,230 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import type { GameData, PlayerInfo, DiceResult, GameLog, PropertyInfo, ChanceCard } from '@silk-road-monopoly/types';
-import { GamePhaseMark, MapEventType } from '@silk-road-monopoly/types';
+import { GamePhaseMark, MapEventType, PortTheme, LandmarkType } from '@silk-road-monopoly/types';
 
 // ==================== 默认地图数据（临时内置，后续从地图文件加载） ====================
 
+/**
+ * 40 格「海上丝绸之路」圆环航线地图。
+ * 格子均匀分布在圆周上（4 * 11 - 4 = 40），起点（泉州）位于正下方，
+ * 按顺时针方向航行：
+ *   泉州(起点) → 广州 → 占城 → 满剌加 → 锡兰 → 古里 → 忽鲁谟斯 → 亚丁 → 亚历山大 → 威尼斯 → 回到泉州
+ * 中心为开放海域（蓝色海洋 + 罗盘玫瑰 + 古代商船队）。
+ */
+const DEFAULT_MAP_LAYOUT: any[] = [
+  // ==================== 0..10 中国东南沿海 / 南海（圆环右下） ====================
+  {
+    index: 0,
+    type: 'start_port',
+    name: '泉州·刺桐城',
+    region: '中国东南',
+    theme: PortTheme.Chinese,
+    landmark: LandmarkType.ChinesePagoda,
+    specialty: '瓷器',
+    description: '海上丝绸之路的东方起点，宋元时期的东方第一大港。',
+  },
+  { index: 1, type: 'chance', name: '南海渔汛', region: '南海' },
+  { index: 2, type: 'tax', name: '市舶司关税', region: '南海' },
+  { index: 3, type: 'fate', name: '香料行情', region: '南海' },
+  { index: 4, type: 'chance', name: '洋流助力', region: '南海' },
+  {
+    index: 5,
+    type: 'port',
+    name: '广州港',
+    region: '中国东南',
+    basePrice: 600,
+    colorGroup: 'blue',
+    theme: PortTheme.Chinese,
+    landmark: LandmarkType.ChineseMinaret,
+    specialty: '丝绸',
+    description: '千年商都，怀圣寺光塔曾为夜航指明方向。',
+  },
+  { index: 6, type: 'fate', name: '珍珠行情', region: '南海' },
+  { index: 7, type: 'chance', name: '飓风警报', region: '南海' },
+  { index: 8, type: 'tax', name: '过港商税', region: '南海' },
+  { index: 9, type: 'chance', name: '顺风顺水', region: '南海' },
+  { index: 10, type: 'jail', name: '海盗岛·南海', region: '危险海域', description: '盘踞在南洋群岛间的海盗巢穴。' },
+  // ==================== 右边 11..20 东南亚 ====================
+  {
+    index: 11,
+    type: 'port',
+    name: '占城港',
+    region: '东南亚',
+    basePrice: 800,
+    colorGroup: 'green',
+    theme: PortTheme.SoutheastAsia,
+    landmark: LandmarkType.ChamTower,
+    specialty: '沉香',
+    description: '古城占婆，盛产沉香与乌木的南洋商港。',
+  },
+  { index: 12, type: 'fate', name: '沉香行情', region: '东南亚' },
+  { index: 13, type: 'chance', name: '季风转向', region: '东南亚' },
+  { index: 14, type: 'tax', name: '入港查验', region: '东南亚' },
+  { index: 15, type: 'chance', name: '海盗出没', region: '东南亚' },
+  {
+    index: 16,
+    type: 'port',
+    name: '满剌加港',
+    region: '东南亚',
+    basePrice: 1000,
+    colorGroup: 'green',
+    theme: PortTheme.SoutheastAsia,
+    landmark: LandmarkType.MalayMosque,
+    specialty: '胡椒',
+    description: '扼守马六甲海峡的咽喉要道，东西货船交汇之地。',
+  },
+  { index: 17, type: 'fate', name: '胡椒行情', region: '东南亚' },
+  { index: 18, type: 'chance', name: '暗礁警报', region: '东南亚' },
+  { index: 19, type: 'tax', name: '海峡通行税', region: '东南亚' },
+  {
+    index: 20,
+    type: 'free_port',
+    name: '公海停泊',
+    region: '公海',
+    theme: PortTheme.Ocean,
+    description: '风平浪静的公海，帆船在此安全休整。',
+  },
+  // ==================== 顶边 21..30 印度洋 ====================
+  { index: 21, type: 'chance', name: '季风洋流', region: '印度洋' },
+  {
+    index: 22,
+    type: 'port',
+    name: '锡兰·科伦坡',
+    region: '印度洋',
+    basePrice: 1200,
+    colorGroup: 'orange',
+    theme: PortTheme.India,
+    landmark: LandmarkType.Stupa,
+    specialty: '珍珠',
+    description: '印度洋上的明珠，佛牙寺的钟声护送远洋商船。',
+  },
+  { index: 23, type: 'fate', name: '珍珠行情', region: '印度洋' },
+  { index: 24, type: 'chance', name: '海市蜃楼', region: '印度洋' },
+  {
+    index: 25,
+    type: 'port',
+    name: '古里港',
+    region: '印度洋',
+    basePrice: 1400,
+    colorGroup: 'orange',
+    theme: PortTheme.India,
+    landmark: LandmarkType.PalaceDome,
+    specialty: '宝石',
+    description: '郑和下西洋的常驻驿站，印度洋贸易的枢纽。',
+  },
+  { index: 26, type: 'tax', name: '港口贸易税', region: '印度洋' },
+  { index: 27, type: 'fate', name: '宝石行情', region: '印度洋' },
+  { index: 28, type: 'chance', name: '逆风滞留', region: '印度洋' },
+  { index: 29, type: 'tax', name: '海峡税', region: '印度洋' },
+  {
+    index: 30,
+    type: 'go_to_jail',
+    name: '亚丁湾·海盗伏击',
+    region: '危险海域',
+    description: '亚丁湾的凶险航路，海盗帆影时隐时现。',
+  },
+  // ==================== 左边 31..39 阿拉伯 → 欧洲 ====================
+  {
+    index: 31,
+    type: 'port',
+    name: '忽鲁谟斯港',
+    region: '阿拉伯',
+    basePrice: 1600,
+    colorGroup: 'red',
+    theme: PortTheme.Arabia,
+    landmark: LandmarkType.ArabianMinaret,
+    specialty: '乳香',
+    description: '波斯湾口的贸易明珠，乳香与骏马的集散地。',
+  },
+  { index: 32, type: 'chance', name: '乳香贸易', region: '阿拉伯' },
+  { index: 33, type: 'tax', name: '关税', region: '阿拉伯' },
+  {
+    index: 34,
+    type: 'port',
+    name: '亚丁港',
+    region: '红海',
+    basePrice: 1800,
+    colorGroup: 'red',
+    theme: PortTheme.RedSea,
+    landmark: LandmarkType.VolcanoLighthouse,
+    specialty: '没药',
+    description: '红海门户，火山脚下的补给良港。',
+  },
+  { index: 35, type: 'fate', name: '没药行情', region: '红海' },
+  {
+    index: 36,
+    type: 'port',
+    name: '亚历山大港',
+    region: '地中海',
+    basePrice: 2000,
+    colorGroup: 'purple',
+    theme: PortTheme.Mediterranean,
+    landmark: LandmarkType.Pharos,
+    specialty: '玻璃',
+    description: '古代世界的知识之都，法罗斯灯塔曾照耀整个地中海。',
+  },
+  { index: 37, type: 'chance', name: '地中海南风', region: '地中海' },
+  { index: 38, type: 'tax', name: '威尼斯入城税', region: '欧洲' },
+  {
+    index: 39,
+    type: 'port',
+    name: '威尼斯港',
+    region: '欧洲',
+    basePrice: 2200,
+    colorGroup: 'purple',
+    theme: PortTheme.Europe,
+    landmark: LandmarkType.Campanile,
+    specialty: '金币',
+    description: '亚得里亚海上的明珠，丝路最西端的商贸终点。',
+  },
+];
+
 function createDefaultPorts() {
-  const portDefs = [
-    { name: '泉州港', region: '中国东南', basePrice: 600, colorGroup: 'blue', specialty: '瓷器' },
-    { name: '广州港', region: '中国东南', basePrice: 600, colorGroup: 'blue', specialty: '丝绸' },
-    { name: '占城港', region: '东南亚', basePrice: 1000, colorGroup: 'green', specialty: '香料' },
-    { name: '满剌加港', region: '东南亚', basePrice: 1200, colorGroup: 'green', specialty: '胡椒' },
-    { name: '古里港', region: '印度洋', basePrice: 1400, colorGroup: 'orange', specialty: '宝石' },
-    { name: '忽鲁谟斯港', region: '阿拉伯', basePrice: 1600, colorGroup: 'orange', specialty: '乳香' },
-    { name: '亚丁港', region: '红海', basePrice: 1800, colorGroup: 'red', specialty: '没药' },
-    { name: '亚历山大港', region: '地中海', basePrice: 2000, colorGroup: 'red', specialty: '玻璃' },
-    { name: '威尼斯港', region: '欧洲', basePrice: 2200, colorGroup: 'purple', specialty: '金币' },
-  ];
-
-  // 构造 32 格地图：起点 + 9 港口 + 事件/税格穿插
   const ports: any[] = [];
-  const events = ['chance', 'fate', 'tax', 'chance', 'free_port', 'go_to_jail', 'jail'];
 
-  for (let i = 0; i < 32; i++) {
-    if (i === 0) {
-      ports.push({ id: 'start', name: '起点·泉州', region: '中国东南', type: 'start_port', index: 0 });
-    } else if (i === 16) {
-      ports.push({ id: 'free_port', name: '自由停泊', region: '公海', type: 'free_port', index: 16 });
-    } else if (i === 24) {
-      ports.push({ id: 'go_to_jail', name: '遭遇海盗!', region: '危险海域', type: 'go_to_jail', index: 24 });
-    } else if (i === 8) {
-      ports.push({ id: 'jail', name: '海盗岛', region: '危险海域', type: 'jail', index: 8 });
-    } else if (i % 3 === 0) {
-      const portIdx = Math.floor(i / 3) - 1;
-      if (portIdx >= 0 && portIdx < portDefs.length) {
-        const p = portDefs[portIdx];
-        ports.push({
-          id: `port_${portIdx}`,
-          name: p.name,
-          region: p.region,
-          type: 'port',
-          index: i,
-          basePrice: p.basePrice,
-          tollFees: [
-            Math.floor(p.basePrice * 0.1),
-            Math.floor(p.basePrice * 0.25),
-            Math.floor(p.basePrice * 0.5),
-            p.basePrice,
-            Math.floor(p.basePrice * 1.5),
-            Math.floor(p.basePrice * 2),
-          ],
-          upgradeCosts: [
-            0,
-            Math.floor(p.basePrice * 0.5),
-            Math.floor(p.basePrice * 0.75),
-            Math.floor(p.basePrice * 1),
-            Math.floor(p.basePrice * 1.5),
-            Math.floor(p.basePrice * 2),
-          ],
-          colorGroup: p.colorGroup,
-          specialty: p.specialty,
-        });
-      } else {
-        ports.push({ id: `event_${i}`, name: '航海事件', region: '海洋', type: 'chance', index: i });
-      }
+  for (const cell of DEFAULT_MAP_LAYOUT) {
+    if (cell.type === 'port') {
+      const basePrice: number = cell.basePrice ?? 0;
+      ports.push({
+        id: `port_${cell.index}`,
+        name: cell.name,
+        region: cell.region,
+        type: 'port',
+        index: cell.index,
+        basePrice,
+        tollFees: [
+          Math.floor(basePrice * 0.1),
+          Math.floor(basePrice * 0.25),
+          Math.floor(basePrice * 0.5),
+          basePrice,
+          Math.floor(basePrice * 1.5),
+          Math.floor(basePrice * 2),
+        ],
+        upgradeCosts: [
+          0,
+          Math.floor(basePrice * 0.5),
+          Math.floor(basePrice * 0.75),
+          Math.floor(basePrice * 1),
+          Math.floor(basePrice * 1.5),
+          Math.floor(basePrice * 2),
+        ],
+        colorGroup: cell.colorGroup,
+        theme: cell.theme,
+        landmark: cell.landmark,
+        specialty: cell.specialty,
+        description: cell.description,
+      });
     } else {
-      ports.push({ id: `event_${i}`, name: '航海事件', region: '海洋', type: 'chance', index: i });
+      ports.push({
+        id: `cell_${cell.index}`,
+        name: cell.name,
+        region: cell.region,
+        type: cell.type,
+        index: cell.index,
+        theme: cell.theme,
+        description: cell.description,
+      });
     }
   }
 
